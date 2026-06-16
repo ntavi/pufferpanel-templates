@@ -1,0 +1,139 @@
+{
+    "type": "valheim",
+    "display": "Valheim Dedicated Server ARM64",
+    "data": {
+        "modpack": {
+            "type": "string",
+            "value": "",
+            "display": "Modpack to run with",
+            "desc": "Open https://thunderstore.io in new tab and right 'manual download' click > copy link. Paste it here if you wish to use this modpack.",
+            "required": false,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "Valheim Server",
+            "display": "Name",
+            "desc": "Choose your servername.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "valheim",
+            "display": "Password",
+            "desc": "Set the server password.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 2456,
+            "display": "Port",
+            "desc": "What port to bind the server to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 2458,
+            "display": "Query Port",
+            "desc": "Additional query port for server listing.",
+            "required": true,
+            "userEdit": true
+        },
+        "world": {
+            "type": "string",
+            "value": "VHWorld",
+            "display": "World",
+            "desc": "What worldmap name to use.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "steamgamedl",
+            "appId": "896660"
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/valheim && until [ -f /tmp/valheim/valheim_server.x86_64 ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 896660 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 896660 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/valheim +login anonymous +app_update 896660 validate +quit; if [ ! -f /tmp/valheim/valheim_server.x86_64 ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/valheim/. . && rm -rf /tmp/valheim'"
+            ]
+        },
+        {
+            "if": "modpack != ''",
+            "type": "download",
+            "files": [
+                "${modpack}"
+            ]
+        },
+        {
+            "if": "modpack != ''",
+            "type": "command",
+            "commands": [
+                "unzip ./denikson-BepInExPack_Valheim*.zip -d ./bepin_temp/",
+                "cp -r ./bepin_temp/BepInExPack_Valheim/. ./",
+                "rm -r ./bepin_temp"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x valheim_server.x86_64"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "box64 ./valheim_server.x86_64 -name ${name} -port ${port} -world ${world} -password ${password} -public 1",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/valheim-arm:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:2457:2457/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "valheim-arm64"
+}
