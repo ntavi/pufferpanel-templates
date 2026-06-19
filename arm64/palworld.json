@@ -1,0 +1,104 @@
+{
+    "type": "palworld",
+    "display": "Palworld Dedicated Server ARM64",
+    "data": {
+        "name": {
+            "type": "string",
+            "value": "Palworld ARM Server",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set your server password (leave blank if none).",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 32,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 8211,
+            "display": "Port",
+            "desc": "The UDP port your server will bind to.",
+            "required": true,
+            "userEdit": false
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "steamgamedl",
+            "appId": "2394010"
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/palworld && until [ -f /tmp/palworld/PalServer.sh ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 2394010 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 2394010 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/palworld +login anonymous +app_update 2394010 validate +quit; if [ ! -f /tmp/palworld/PalServer.sh ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/palworld/. . && rm -rf /tmp/palworld'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x PalServer.sh",
+                "chmod +x Pal/Binaries/Linux/PalServer-Linux-Shipping"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u palworld >/dev/null 2>&1 || useradd -m palworld || adduser -D palworld; mkdir -p /home/palworld/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/palworld/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/palworld/.steam/sdk64/; fi; chown -R palworld:palworld . /home/palworld/.steam; exec runuser -u palworld -- box64 ./Pal/Binaries/Linux/PalServer-Linux-Shipping Pal -port=${port} -players=${players} -ServerName=\"${name}\" -ServerPassword=\"${password}\" -PublicPort=${port}'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/valheim-arm:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:27015:27015/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64"
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "Palworld Arm64"
+}
