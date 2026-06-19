@@ -1,0 +1,117 @@
+{
+    "type": "vrising",
+    "display": "V Rising Dedicated Server ARM64",
+    "data": {
+        "name": {
+            "type": "string",
+            "value": "V Rising Server",
+            "display": "Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Password",
+            "desc": "Set the server password. Leave blank for no password.",
+            "required": false,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 9876,
+            "display": "Game Port",
+            "desc": "What game port to bind the server to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 9877,
+            "display": "Query Port",
+            "desc": "Additional query port for server listing.",
+            "required": true,
+            "userEdit": true
+        },
+        "save_name": {
+            "type": "string",
+            "value": "world1",
+            "display": "Save Name",
+            "desc": "Name of the save file/world.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "command",
+            "commands": [
+                "steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir . +login anonymous +app_update 1829350 validate +quit"
+            ]
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/vrising && until [ -f /tmp/vrising/VRisingServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 1829350 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 1829350 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/vrising +login anonymous +app_update 1829350 validate +quit; if [ ! -f /tmp/vrising/VRisingServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/vrising/. . && rm -rf /tmp/vrising'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x VRisingServer.exe"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u vrising >/dev/null 2>&1 || useradd -m vrising || adduser -D vrising; mkdir -p /home/vrising/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/vrising/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/vrising/.steam/sdk64/; fi; chown -R vrising:vrising . /home/vrising/.steam; exec runuser -u vrising -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/vrising/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./VRisingServer.exe -persistentDataPath ./save-data -serverName \"${name}\" -saveName \"${save_name}\" -logFile \"./logs/VRisingServer.log\"'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ],
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest"
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "vrising-arm64"
+}
