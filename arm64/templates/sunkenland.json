@@ -1,0 +1,143 @@
+{
+    "type": "sunkenland",
+    "display": "Sunkenland Dedicated Server ARM64",
+    "data": {
+        "invisible": {
+            "type": "boolean",
+            "value": false,
+            "display": "Hide From Server List",
+            "desc": "If enabled, the server will not appear in the in-game server browser. Players must join using the ServerID printed to the console at startup.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server. Maximum 8 characters (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 8,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players. Hard cap is 15, this cannot be exceeded.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 29000,
+            "display": "Game Port",
+            "desc": "UDP/TCP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 29002,
+            "display": "Query Port",
+            "desc": "Query port for server listing, recommended as game port +2.",
+            "required": true,
+            "userEdit": true
+        },
+        "region": {
+            "type": "string",
+            "value": "eu",
+            "display": "Region",
+            "desc": "Region the server reports as, e.g. eu, us, usw.",
+            "required": true,
+            "userEdit": true
+        },
+        "world_guid": {
+            "type": "string",
+            "value": "",
+            "display": "World GUID",
+            "desc": "The GUID of the world to load (the part after the ~ in the world folder name, e.g. MyIsland~7b52ef0c-8c71-4d05-bac5-415e57c1fcb0 -> use only 7b52ef0c-8c71-4d05-bac5-415e57c1fcb0). CAUTION: if this does not match an existing world folder, the server will crash on launch.",
+            "required": true,
+            "userEdit": true
+        },
+        "world_url": {
+            "type": "string",
+            "value": "",
+            "display": "Default World Download URL",
+            "desc": "Direct download link to a zipped default world folder. Required on first install since Sunkenland's server cannot generate a world itself. Leave blank only if you already have a world in place from a previous install.",
+            "required": false,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/sunkenland && until [ -f /tmp/sunkenland/Sunkenland-DedicatedServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2667530 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2667530 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/sunkenland +login anonymous +app_update 2667530 validate +quit; box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/sunkenland +login anonymous +app_update 2667530 validate +quit; if [ ! -f /tmp/sunkenland/Sunkenland-DedicatedServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/sunkenland/. . && rm -rf /tmp/sunkenland'"
+            ]
+        },
+        {
+            "if": "world_url != ''",
+            "type": "download",
+            "files": [
+                "${world_url}"
+            ]
+        },
+        {
+            "if": "world_url != ''",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p \"./wineprefix/drive_c/users/sunkenland/AppData/LocalLow/Vector3 Studio/Sunkenland/Worlds\"; for f in *.zip; do [ -f \"$f\" ] && unzip -o \"$f\" -d \"./wineprefix/drive_c/users/sunkenland/AppData/LocalLow/Vector3 Studio/Sunkenland/Worlds/\"; done'"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u sunkenland >/dev/null 2>&1 || useradd -m sunkenland || adduser -D sunkenland; mkdir -p /home/sunkenland/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/sunkenland/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/sunkenland/.steam/sdk64/; fi; if [ -d ./wineprefix ]; then mkdir -p /home/sunkenland/.wine; cp -rn ./wineprefix/. /home/sunkenland/.wine/ 2>/dev/null || true; fi; chown -R sunkenland:sunkenland . /home/sunkenland/.steam /home/sunkenland/.wine 2>/dev/null; PASS_FLAG=\"\"; if [ -n \"${password}\" ]; then PASS_FLAG=\"-password ${password}\"; fi; VIS_FLAG=\"\"; if [ \"${invisible}\" = \"true\" ]; then VIS_FLAG=\"-sessionInvisible true\"; fi; exec runuser -u sunkenland -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/sunkenland/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./Sunkenland-DedicatedServer.exe -nographics -batchmode -worldGuid ${world_guid} -region ${region} -maxPlayerCapacity ${players} -port ${port} -queryport ${query_port} ${PASS_FLAG} ${VIS_FLAG}'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${port}:${port}/tcp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ],
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest"
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "sunkenland-arm64"
+}
