@@ -1,0 +1,140 @@
+{
+    "type": "enshrouded",
+    "display": "Enshrouded Dedicated Server ARM64",
+    "data": {
+        "enableWhitelist": {
+            "type": "boolean",
+            "value": false,
+            "display": "Enable Whitelist",
+            "desc": "Restrict joining to whitelisted Steam/player IDs only.",
+            "required": true,
+            "userEdit": true
+        },
+        "logDirectory": {
+            "type": "string",
+            "value": "./logs",
+            "display": "Log Directory",
+            "desc": "Path (relative to server folder) where server logs are written.",
+            "required": true,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "Enshrouded Server",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 15636,
+            "display": "Game Port",
+            "desc": "UDP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 15637,
+            "display": "Query Port",
+            "desc": "UDP query port used for server listing.",
+            "required": true,
+            "userEdit": true
+        },
+        "saveDirectory": {
+            "type": "string",
+            "value": "./savegame",
+            "display": "Save Directory",
+            "desc": "Path (relative to server folder) where world saves are stored.",
+            "required": true,
+            "userEdit": true
+        },
+        "slots": {
+            "type": "integer",
+            "value": 16,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players (slotCount).",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "steamgamedl",
+            "appId": "2278520"
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/enshrouded && until [ -f /tmp/enshrouded/enshrouded_server.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2278520 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2278520 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/enshrouded +login anonymous +app_update 2278520 validate +quit; if [ ! -f /tmp/enshrouded/enshrouded_server.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/enshrouded/. . && rm -rf /tmp/enshrouded'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x enshrouded_server.exe",
+                "mkdir -p ${saveDirectory} ${logDirectory}"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u enshrouded >/dev/null 2>&1 || useradd -m enshrouded || adduser -D enshrouded; mkdir -p /home/enshrouded/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/enshrouded/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/enshrouded/.steam/sdk64/; fi; chown -R enshrouded:enshrouded . /home/enshrouded/.steam; cat > enshrouded_server.json << EOF\n{\n  \"name\": \"${name}\",\n  \"password\": \"${password}\",\n  \"saveDirectory\": \"${saveDirectory}\",\n  \"logDirectory\": \"${logDirectory}\",\n  \"ip\": \"0.0.0.0\",\n  \"gamePort\": ${port},\n  \"queryPort\": ${query_port},\n  \"slotCount\": ${slots},\n  \"enableWhitelist\": ${enableWhitelist},\n  \"whitelist\": [],\n  \"adminIds\": []\n}\nEOF\nchown enshrouded:enshrouded enshrouded_server.json; exec runuser -u enshrouded -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/enshrouded/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./enshrouded_server.exe'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "wine"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "enshrouded-arm64"
+}
