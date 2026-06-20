@@ -1,0 +1,144 @@
+{
+    "type": "ark-survival-evolved",
+    "display": "ARK: Survival Evolved Dedicated Server ARM64",
+    "data": {
+        "adminPassword": {
+            "type": "string",
+            "value": "changeme",
+            "display": "Admin Password",
+            "desc": "Password used for in-game admin commands.",
+            "required": true,
+            "userEdit": true
+        },
+        "map": {
+            "type": "string",
+            "value": "TheIsland",
+            "display": "Map",
+            "desc": "Map to load, e.g. TheIsland, ScorchedEarth_P, Aberration_P, Extinction, TheCenter, Ragnarok.",
+            "required": true,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "ARK Server",
+            "display": "Server Name",
+            "desc": "Choose your server name (SessionName).",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 70,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 7777,
+            "display": "Game Port",
+            "desc": "What UDP port to bind the game server to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 27015,
+            "display": "Query Port",
+            "desc": "Additional UDP query port for server listing.",
+            "required": true,
+            "userEdit": true
+        },
+        "rcon_enabled": {
+            "type": "boolean",
+            "value": true,
+            "display": "Enable RCON",
+            "desc": "Whether to enable the RCON remote console.",
+            "required": true,
+            "userEdit": true
+        },
+        "rcon_port": {
+            "type": "integer",
+            "value": 27020,
+            "display": "RCON Port",
+            "desc": "TCP port used for RCON remote console access.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "steamgamedl",
+            "appId": "376030"
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/ark && until [ -f /tmp/ark/ShooterGame/Binaries/Linux/ShooterGameServer ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 376030 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 376030 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/ark +login anonymous +app_update 376030 validate +quit; if [ ! -f /tmp/ark/ShooterGame/Binaries/Linux/ShooterGameServer ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/ark/. . && rm -rf /tmp/ark'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x ShooterGame/Binaries/Linux/ShooterGameServer"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "box64 ./ShooterGame/Binaries/Linux/ShooterGameServer '${map}?listen?SessionName=${name}?ServerPassword=${password}?ServerAdminPassword=${adminPassword}?Port=${port}?QueryPort=${query_port}?MaxPlayers=${players}?RCONEnabled=${rcon_enabled}?RCONPort=${rcon_port}' -server -log",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/valheim-arm:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp",
+                "0.0.0.0:${rcon_port}:${rcon_port}/tcp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64"
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "ark-arm"
+}
