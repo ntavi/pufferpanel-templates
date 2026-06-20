@@ -1,0 +1,95 @@
+{
+    "type": "returntomoria",
+    "display": "Lord of the Rings: Return to Moria Dedicated Server ARM64",
+    "data": {
+        "name": {
+            "type": "string",
+            "value": "Moria Server",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 8,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 7777,
+            "display": "Game Port",
+            "desc": "UDP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/moria && until [ -f /tmp/moria/MoriaServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/moria +login anonymous +app_update 3349480 validate +quit; if [ ! -f /tmp/moria/MoriaServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/moria/. . && rm -rf /tmp/moria'"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u moria >/dev/null 2>&1 || useradd -m moria || adduser -D moria; mkdir -p /home/moria/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/moria/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/moria/.steam/sdk64/; fi; chown -R moria:moria . /home/moria/.steam; if [ ! -f Moria/Saved/Config/WindowsServer/MoriaServerConfig.ini ]; then echo \"No config found, running once to generate it...\"; runuser -u moria -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/moria/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./MoriaServer.exe -log & GEN_PID=$!; sleep 30; kill $GEN_PID 2>/dev/null; wait $GEN_PID 2>/dev/null; fi; CFG=Moria/Saved/Config/WindowsServer/MoriaServerConfig.ini; if [ -f \"$CFG\" ]; then sed -i \"s/^ServerName=.*/ServerName=${name}/\" \"$CFG\" || echo \"ServerName=${name}\" >> \"$CFG\"; sed -i \"s/^ServerPassword=.*/ServerPassword=${password}/\" \"$CFG\" || echo \"ServerPassword=${password}\" >> \"$CFG\"; sed -i \"s/^MaxPlayers=.*/MaxPlayers=${players}/\" \"$CFG\" || echo \"MaxPlayers=${players}\" >> \"$CFG\"; sed -i \"s/^Port=.*/Port=${port}/\" \"$CFG\" || echo \"Port=${port}\" >> \"$CFG\"; chown moria:moria \"$CFG\"; fi; exec runuser -u moria -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/moria/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./MoriaServer.exe -log'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "returntomoria-arm64"
+}
