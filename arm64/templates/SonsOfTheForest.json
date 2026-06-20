@@ -1,0 +1,126 @@
+{
+    "type": "sonsoftheforest",
+    "display": "Sons of the Forest Dedicated Server ARM64",
+    "data": {
+        "blob_sync_port": {
+            "type": "integer",
+            "value": 9700,
+            "display": "Blob Sync Port",
+            "desc": "UDP port used by the BlobSync system.",
+            "required": true,
+            "userEdit": true
+        },
+        "game_port": {
+            "type": "integer",
+            "value": 8766,
+            "display": "Game Port",
+            "desc": "UDP port used for gameplay netcode.",
+            "required": true,
+            "userEdit": false
+        },
+        "max_players": {
+            "type": "integer",
+            "value": 8,
+            "display": "Max Players",
+            "desc": "Maximum number of players allowed (1-8).",
+            "required": true,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "Sons of the Forest Server",
+            "display": "Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Password",
+            "desc": "Set the server password. Leave blank for no password.",
+            "required": false,
+            "userEdit": true
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 27016,
+            "display": "Query Port",
+            "desc": "UDP port used by Steam to list the server.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "command",
+            "commands": [
+                "steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir . +login anonymous +app_update 2465200 validate +quit"
+            ]
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/sotf && until [ -f /tmp/sotf/SonsOfTheForestDS.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2465200 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2465200 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/sotf +login anonymous +app_update 2465200 validate +quit; if [ ! -f /tmp/sotf/SonsOfTheForestDS.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/sotf/. . && rm -rf /tmp/sotf'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x SonsOfTheForestDS.exe"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u sotf >/dev/null 2>&1 || useradd -m sotf || adduser -D sotf; mkdir -p /home/sotf/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/sotf/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/sotf/.steam/sdk64/; fi; chown -R sotf:sotf . /home/sotf/.steam; exec runuser -u sotf -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/sotf/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./SonsOfTheForestDS.exe -userdatapath \"./config\" -dedicatedserver.ServerName \"${name}\" -dedicatedserver.Password \"${password}\" -dedicatedserver.MaxPlayers \"${max_players}\" -dedicatedserver.GamePort \"${game_port}\" -dedicatedserver.QueryPort \"${query_port}\" -dedicatedserver.BlobSyncPort \"${blob_sync_port}\"'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "portBindings": [
+                "0.0.0.0:${game_port}:${game_port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp",
+                "0.0.0.0:${blob_sync_port}:${blob_sync_port}/udp"
+            ],
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest"
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "sonsoftheforest-arm64"
+}
