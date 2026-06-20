@@ -1,0 +1,112 @@
+{
+    "type": "scum",
+    "display": "SCUM Dedicated Server ARM64 (EXPERIMENTAL - requires 8GB+ RAM, see notes)",
+    "data": {
+        "battleye": {
+            "type": "boolean",
+            "value": true,
+            "display": "Enable BattlEye",
+            "desc": "Whether to run the server with BattlEye anti-cheat enabled. Disabling is not recommended for public servers.",
+            "required": true,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "SCUM Server",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 64,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players. IMPORTANT: this server requires a minimum of 8GB RAM just to start with zero players connected, and memory usage grows substantially with player count, mods, and settings. Do not attempt to run this on a host with less than 8GB RAM available to the container.",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 7777,
+            "display": "Game Port",
+            "desc": "UDP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 7779,
+            "display": "Query Port",
+            "desc": "UDP query port for server listing. Recommended to set as game port +2. Avoid the 27020-27050 range due to Steam conflicts.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/scum && until [ -f /tmp/scum/SCUM/Binaries/Win64/SCUMServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3792580 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3792580 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/scum +login anonymous +app_update 3792580 validate +quit; if [ ! -f /tmp/scum/SCUM/Binaries/Win64/SCUMServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/scum/. . && rm -rf /tmp/scum'"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u scum >/dev/null 2>&1 || useradd -m scum || adduser -D scum; mkdir -p /home/scum/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/scum/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/scum/.steam/sdk64/; fi; chown -R scum:scum . /home/scum/.steam; cd SCUM/Binaries/Win64; BE_FLAG=\"\"; if [ \"${battleye}\" = \"false\" ]; then BE_FLAG=\"-nobattleye\"; fi; exec runuser -u scum -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/scum/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./SCUMServer.exe -log -port=${port} -queryport=${query_port} -MaxPlayers=${players} ${BE_FLAG}'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ],
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest"
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "unzip"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "scum-arm64"
+}
