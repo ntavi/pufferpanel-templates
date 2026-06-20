@@ -1,0 +1,145 @@
+{
+    "type": "cs16",
+    "display": "Counter-Strike 1.6 Dedicated Server ARM64",
+    "data": {
+        "freezetime": {
+            "type": "integer",
+            "value": 5,
+            "display": "Freeze Time (seconds)",
+            "desc": "Buy-time freeze period at round start, in seconds (mp_freezetime).",
+            "required": true,
+            "userEdit": true
+        },
+        "hostname": {
+            "type": "string",
+            "value": "CS 1.6 Server",
+            "display": "Server Name",
+            "desc": "Choose your server name (hostname).",
+            "required": true,
+            "userEdit": true
+        },
+        "map": {
+            "type": "string",
+            "value": "de_dust2",
+            "display": "Starting Map",
+            "desc": "Map to load on server start.",
+            "required": true,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 16,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players (maxplayers).",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 27015,
+            "display": "Port",
+            "desc": "UDP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        },
+        "rcon_password": {
+            "type": "string",
+            "value": "changeme",
+            "display": "RCON Password",
+            "desc": "Password required for remote console (RCON) access.",
+            "required": true,
+            "userEdit": true
+        },
+        "roundtime": {
+            "type": "integer",
+            "value": 3,
+            "display": "Round Time (minutes)",
+            "desc": "Round time limit in minutes (mp_roundtime).",
+            "required": true,
+            "userEdit": true
+        },
+        "startmoney": {
+            "type": "integer",
+            "value": 800,
+            "display": "Starting Money",
+            "desc": "Money players start each round with (mp_startmoney).",
+            "required": true,
+            "userEdit": true
+        },
+        "sv_lan": {
+            "type": "boolean",
+            "value": false,
+            "display": "LAN Only",
+            "desc": "Restrict the server to LAN clients only (sv_lan).",
+            "required": true,
+            "userEdit": true
+        },
+        "timelimit": {
+            "type": "integer",
+            "value": 20,
+            "display": "Time Limit (minutes)",
+            "desc": "Map time limit in minutes, 0 for no limit (mp_timelimit).",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/cs16 && until [ -f /tmp/cs16/hlds_run ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 90 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 90 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/cs16 +login anonymous +app_set_config 90 mod cstrike +app_update 90 validate +quit; if [ ! -f /tmp/cs16/hlds_run ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/cs16/. . && rm -rf /tmp/cs16'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "chmod +x hlds_run hlds_linux"
+            ]
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u cs16 >/dev/null 2>&1 || useradd -m cs16 || adduser -D cs16; mkdir -p /home/cs16/.steam/sdk32; if [ -f ./linux32/steamclient.so ]; then cp ./linux32/steamclient.so /home/cs16/.steam/sdk32/; elif [ -f /root/steamcmd/linux32/steamclient.so ]; then cp /root/steamcmd/linux32/steamclient.so /home/cs16/.steam/sdk32/; fi; chown -R cs16:cs16 . /home/cs16/.steam; cat > cstrike/server.cfg << EOF\nhostname \"${hostname}\"\nrcon_password \"${rcon_password}\"\nmaxplayers ${players}\nmp_timelimit ${timelimit}\nmp_roundtime ${roundtime}\nmp_freezetime ${freezetime}\nmp_startmoney ${startmoney}\nsv_lan ${sv_lan}\nEOF\nchown cs16:cs16 cstrike/server.cfg; exec runuser -u cs16 -- box64 ./hlds_linux -game cstrike +ip 0.0.0.0 -console +maxplayers ${players} +map ${map} +port ${port} +exec server.cfg'",
+        "stopCode": 2,
+        "environmentVars": {
+            "LD_LIBRARY_PATH": "./linux32:$LD_LIBRARY_PATH"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/valheim-arm:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "box64"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "cs16-arm64"
+}
