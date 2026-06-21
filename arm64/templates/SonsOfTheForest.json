@@ -18,6 +18,14 @@
             "required": true,
             "userEdit": false
         },
+        "lan_only": {
+            "type": "boolean",
+            "value": false,
+            "display": "LAN Only",
+            "desc": "Restrict the server to LAN visibility only. Useful if you don't need/want the server to be publicly listed.",
+            "required": true,
+            "userEdit": true
+        },
         "max_players": {
             "type": "integer",
             "value": 8,
@@ -49,6 +57,14 @@
             "desc": "UDP port used by Steam to list the server.",
             "required": true,
             "userEdit": true
+        },
+        "skip_network_test": {
+            "type": "boolean",
+            "value": true,
+            "display": "Skip Network Accessibility Test",
+            "desc": "Skips the public accessibility self-test on boot. Docker/NAT/Wine setups very commonly fail this test even when the server is actually reachable, since it relies on Windows networking calls (GetAdaptersAddresses) that misbehave under Wine/box64. Leave this ON unless you've verified your network supports NAT loopback/hairpin NAT and want the test to run.",
+            "required": true,
+            "userEdit": true
         }
     },
     "install": [
@@ -69,13 +85,14 @@
         {
             "type": "command",
             "commands": [
-                "chmod +x SonsOfTheForestDS.exe"
+                "chmod +x SonsOfTheForestDS.exe",
+                "mkdir -p ./config"
             ]
         }
     ],
     "uninstall": null,
     "run": {
-        "command": "sh -c 'id -u sotf >/dev/null 2>&1 || useradd -m sotf || adduser -D sotf; mkdir -p /home/sotf/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/sotf/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/sotf/.steam/sdk64/; fi; chown -R sotf:sotf . /home/sotf/.steam; exec runuser -u sotf -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/sotf/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./SonsOfTheForestDS.exe -userdatapath \"./config\" -dedicatedserver.ServerName \"${name}\" -dedicatedserver.Password \"${password}\" -dedicatedserver.MaxPlayers \"${max_players}\" -dedicatedserver.GamePort \"${game_port}\" -dedicatedserver.QueryPort \"${query_port}\" -dedicatedserver.BlobSyncPort \"${blob_sync_port}\"'",
+        "command": "sh -c 'id -u sotf >/dev/null 2>&1 || useradd -m sotf || adduser -D sotf; mkdir -p /home/sotf/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/sotf/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/sotf/.steam/sdk64/; fi; mkdir -p ./config; cat > ./config/dedicatedserver.cfg << EOF\n{\n  \"IpAddress\": \"0.0.0.0\",\n  \"GamePort\": ${game_port},\n  \"QueryPort\": ${query_port},\n  \"BlobSyncPort\": ${blob_sync_port},\n  \"ServerName\": \"${name}\",\n  \"MaxPlayers\": ${max_players},\n  \"Password\": \"${password}\",\n  \"LanOnly\": ${lan_only},\n  \"SaveSlot\": 1,\n  \"SaveMode\": \"Continue\",\n  \"GameMode\": \"Normal\",\n  \"SaveInterval\": 600,\n  \"IdleDayCycleSpeed\": 0.0,\n  \"IdleTargetFramerate\": 5,\n  \"ActiveTargetFramerate\": 60,\n  \"LogFilesEnabled\": false,\n  \"TimestampLogFilenames\": true,\n  \"TimestampLogEntries\": true,\n  \"SkipNetworkAccessibilityTest\": ${skip_network_test},\n  \"GameSettings\": {},\n  \"CustomGameModeSettings\": {}\n}\nEOF\nchown -R sotf:sotf . /home/sotf/.steam; exec runuser -u sotf -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/sotf/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./SonsOfTheForestDS.exe -userdatapath \"./config\"'",
         "stopCode": 2,
         "environmentVars": {
             "BOX64_DYNAREC_STRONGMEM": "1",
