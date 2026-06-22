@@ -2,23 +2,45 @@
     "type": "returntomoria",
     "display": "Lord of the Rings: Return to Moria Dedicated Server ARM64",
     "data": {
-        "name": {
-            "type": "string",
-            "value": "Moria Server",
-            "display": "Server Name",
-            "desc": "Choose your server name.",
+        "difficult": {
+            "type": "options",
+            "value": "normal",
+            "display": "Difficulty",
             "required": true,
-            "userEdit": true
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "Story",
+                    "display": "story"
+                },
+                {
+                    "value": "Solo",
+                    "display": "solo"
+                },
+                {
+                    "value": "Normal",
+                    "display": "normal"
+                },
+                {
+                    "value": "Hard",
+                    "display": "hard"
+                },
+                {
+                    "value": "Custom",
+                    "display": "custom"
+                }
+            ]
         },
-        "password": {
+        "dlc": {
             "type": "string",
-            "value": "",
-            "display": "Server Password",
-            "desc": "Set the join password for your server (leave blank for none).",
-            "required": false,
-            "userEdit": true
+            "value": "\"\"",
+            "display": "DLC",
+            "desc": "Latest is \"DurinsFolk\"",
+            "required": true,
+            "userEdit": true,
+            "internal": false
         },
-        "players": {
+        "max_players": {
             "type": "integer",
             "value": 8,
             "display": "Max Players",
@@ -30,9 +52,49 @@
             "type": "integer",
             "value": 7777,
             "display": "Game Port",
-            "desc": "UDP port the server will bind to.",
+            "desc": "UDP port the server will bind to. NOTE: changing this only remaps the host-side port; the container always listens on 7777 internally per the moria-arm image, so do not edit ListenPort inside MoriaServerConfig.ini.",
             "required": true,
             "userEdit": false
+        },
+        "seed": {
+            "type": "string",
+            "value": "random",
+            "display": "Seed",
+            "required": true,
+            "userEdit": true
+        },
+        "sv_name": {
+            "type": "string",
+            "value": "Moria Server",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
+            "required": true,
+            "userEdit": true
+        },
+        "sv_password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "desc": "Set the join password for your server (leave blank for none).",
+            "required": false,
+            "userEdit": true
+        },
+        "world_type": {
+            "type": "options",
+            "value": "campaign",
+            "display": "World Type",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "Campaign",
+                    "display": "campaign"
+                },
+                {
+                    "value": "Sandbox",
+                    "display": "sandbox"
+                }
+            ]
         }
     },
     "install": [
@@ -40,14 +102,19 @@
             "if": "env == 'docker'",
             "type": "command",
             "commands": [
-                "sh -c 'mkdir -p /tmp/moria && until [ -f /tmp/moria/MoriaServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/moria +login anonymous +app_update 3349480 validate +quit; if [ ! -f /tmp/moria/MoriaServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/moria/. . && rm -rf /tmp/moria'"
+                "sh -c 'mkdir -p /tmp/server && BIN=/tmp/server/Moria/Binaries/Win64/MoriaServer-Win64-Shipping.exe; BAK=/tmp/server/Moria/Binaries/Win64/MoriaServer-Win64-Shipping.bak; if [ -f \"$BAK\" ]; then rm -f \"$BIN\"; mv \"$BAK\" \"$BIN\"; fi; until [ -f \"$BIN\" ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 3349480 +quit > /dev/null; fi; if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/server +login anonymous +app_update 3349480 validate +quit; else steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/server +login anonymous +app_update 3349480 validate +quit; fi; if [ ! -f \"$BIN\" ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done; echo \"[install] Patching subsystem in MoriaServer-Win64-Shipping.exe for console access\"; patcher \"$BIN\"; echo \"[install] Done. Files are in /tmp/server, ready to start.\" && cp -r /tmp/server/. . && rm -rf /tmp/server'"
             ]
+        },
+        {
+            "type": "writefile",
+            "target": "MoriaServerConfig.ini",
+            "text": "; Configuration file for the dedicated server.\r\n; Only edit this configuration when the server is offline.\r\n; This list may be overwritten when changes are made in-game.\r\n\r\n\r\n[Main]\r\n; If a password is specified, players will need to enter a password to join the server.\r\n; Case-sensitive.\r\nOptionalPassword=${sv_password}\r\n\r\n\r\n[World]\r\n; Name of the saved world to load. If it doesn't exist, create it\r\n; with the properties defined in the [World.Create] section.\r\nName=${sv_name}\r\n\r\n; The file name of the world to load. Helpful if you have multiple worlds with the same name.\r\n; Note that renaming world files is not currently supported.\r\nOptionalWorldFilename=\r\n\r\n\r\n[World.Create]\r\n; World generation parameters, only for newly created worlds.\r\n\r\n; Type of world to create:\r\n;  * campaign\r\n;  * sandbox\r\nType=${world_type}\r\n\r\n; Seed for world generation:\r\n;  * random - Generates a random seed.\r\n;  * <integer> - Use the given number.\r\nSeed=${seed}\r\n\r\n; Specify world difficulty:\r\n;  * story: Ideal for players who want to experience the story without much danger.\r\n;  * solo: Ideal for a single dwarf.\r\n;  * normal: Ideal for a small company of dwarves.\r\n;  * hard: Ideal for a large company of dwarves.\r\n;  * custom: Use customizations for each category of difficulty.\r\nDifficulty.Preset=${difficult}\r\n\r\n; Custom difficulty properties, used only if the \"Difficulty.Preset\" property is set to custom.\r\n; Acceptable values are verylow, low, default, high and veryhigh.\r\n; The base enemy damage and hit points.\r\nDifficulty.Custom.CombatDifficulty=default\r\n; How often enemies attack and how many will attack at once.\r\nDifficulty.Custom.EnemyAggression=high\r\n; The strength of various buffs, speed a dwarf succumbs to despair and\r\n; the decay rates of stamina, energy and hunger.\r\nDifficulty.Custom.SurvivalDifficulty=default\r\n; Volume of ore that drops from each vein.\r\nDifficulty.Custom.MiningDrops=default\r\n; The drop rates of rewards for defeating orcs and enemies.\r\nDifficulty.Custom.WorldDrops=default\r\n; How often noisy actions will trigger a horde of orcs.\r\nDifficulty.Custom.HordeFrequency=default\r\n; How often orcs will target and attack a dwarf base.\r\nDifficulty.Custom.SiegeFrequency=default\r\n; How often orc and enemy groups spawn.\r\nDifficulty.Custom.PatrolFrequency=default\r\n\r\n; Comma separated list of DLCs enabled which will be used when creating a new world.\r\n; Once DLC is enabled for a world, it cannot be disabled.\r\n; \"DLC1,DLC2,DLC3\" etc\r\n; By default this will always be populated with every possible DLC\r\n; If you wish to create new worlds with all possible DLCs enabled, leave this with default values.\r\nOptionalDLC.Array=${dlc}\r\n\r\n; Comma separated list of DLCs to apply when upgrading worlds without them.\r\n; By default this will always be empty as upgraded worlds cannot go back.\r\n; Most commonly used when loading old worlds after new DLC content is released.\r\n; If you wish to upgrade your existing worlds to new DLC content please fill this in with OptionalDLC values above.\r\nUpgradeOptionalDLC.Array=\"\"\r\n\r\n\r\n[Host]\r\n\r\n; Local IP address to bind on the server.\r\n; Normally leave this empty.\r\n; Possible values:\r\n; * Empty value for default (bind all adapters.)\r\n; * <IPv4> or <IPv6> ... manually specify the IP address.\r\nListenAddress=0.0.0.0\r\n\r\n; Port bound by the server for incoming connections.\r\n; You must allow TCP and UDP traffic on your firewall and may need to set up port forwarding.\r\n; Possible values:\r\n;  * -1 ... use the default engine port (7777)\r\n;  * <integer> ... manually specify the port.\r\nListenPort=${port}\r\n\r\n; Host reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally set this to \"auto\".\r\n; If this machine and all of your friends are playing on a LAN, set this to \"local\" to avoid having to set up port forwarding.\r\n; If there is an issue with automatic detection, you can specify your server's IP address directly.\r\n; Possible values:\r\n;  * auto ... detect public IP address. For public servers or servers behind NAT, proxy,\r\n;             or in a container with properly configured port mapping or port forwarding.\r\n;  * local ... automatically detect local IP address. For LAN games and servers with a public IP address.\r\n;  * <IPv4> or <IPv6> ... manually specify the IP address clients should connect to.\r\nAdvertiseAddress=auto\r\n\r\n; Port reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally leave this empty.\r\n; Possible values:\r\n;  * <empty> ... use the ListenPort. To be used when connecting directly or via port forwarding.\r\n;  * <integer> ... manually specify the port. To be used when the server\r\n;                  listen port is mapped to a different, exposed port. This is rare.\r\nAdvertisePort=\r\n\r\n; If you fail to host on launch, the maximum number of seconds to retry.\r\nInitialConnectionRetryTime=120\r\n\r\n; If your hosted session drops, the maximum number of seconds to try to rehost.\r\nAfterDisconnectionRetryTime=600\r\n\r\n\r\n[Console]\r\n; Open the console window so you can type commands. (true or false)\r\n; Note: To close the app, you will need to kill the process in Windows Task Manager.\r\nEnabled=true\r\n\r\n\r\n[Performance]\r\n; Frames per second to tick the server.\r\n; Typically leave this at 60. Higher values are unlikely to improve a dedicated server.\r\n; If your server uses too much CPU, you might try 30 fps instead.\r\nServerFPS=60\r\n; Maximum number of areas to keep loaded at once, a number between 4 and 32.\r\n; This number greatly impacts memory, CPU usage and bandwidth.\r\n; The default is 12 loaded areas, which generally supports 8 player sessions well.\r\n; If you wish to improve performance, reducing to 8 loaded areas supports 4 player sessions very well.\r\n; Increasing this number above 12 may decrease the number of loading walls you see,\r\n; at the cost of much higher memory and CPU usage, as more enemies will need to be simulated to fill those areas.\r\nLoadedAreaLimit=12\r\n"
         }
     ],
     "uninstall": null,
     "run": {
-        "command": "sh -c 'id -u moria >/dev/null 2>&1 || useradd -m moria || adduser -D moria; mkdir -p /home/moria/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/moria/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/moria/.steam/sdk64/; fi; chown -R moria:moria . /home/moria/.steam; if [ ! -f Moria/Saved/Config/WindowsServer/MoriaServerConfig.ini ]; then echo \"No config found, running once to generate it...\"; runuser -u moria -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/moria/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./MoriaServer.exe -log & GEN_PID=$!; sleep 30; kill $GEN_PID 2>/dev/null; wait $GEN_PID 2>/dev/null; fi; CFG=Moria/Saved/Config/WindowsServer/MoriaServerConfig.ini; if [ -f \"$CFG\" ]; then sed -i \"s/^ServerName=.*/ServerName=${name}/\" \"$CFG\" || echo \"ServerName=${name}\" >> \"$CFG\"; sed -i \"s/^ServerPassword=.*/ServerPassword=${password}/\" \"$CFG\" || echo \"ServerPassword=${password}\" >> \"$CFG\"; sed -i \"s/^MaxPlayers=.*/MaxPlayers=${players}/\" \"$CFG\" || echo \"MaxPlayers=${players}\" >> \"$CFG\"; sed -i \"s/^Port=.*/Port=${port}/\" \"$CFG\" || echo \"Port=${port}\" >> \"$CFG\"; chown moria:moria \"$CFG\"; fi; exec runuser -u moria -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/moria/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./MoriaServer.exe -log'",
-        "stopCode": 2,
+        "command": "sh -c 'echo \"[run] --- DIAGNOSTIC: contents of server ---\"; ls -la . 2>&1 || echo \"[run] server missing or unreadable\"; echo \"[run] --- DIAGNOSTIC: contents of ./Moria (if exists) ---\"; ls -la ./Moria 2>&1 || echo \"[run] ./Moria missing\"; echo \"[run] --- DIAGNOSTIC: contents of /server/Moria/Binaries/Win64 (if exists) ---\"; ls -la ./Moria/Binaries/Win64 2>&1 || echo \"[run] ./Moria/Binaries/Win64 missing\"; echo \"[run] --- DIAGNOSTIC: searching whole filesystem for MoriaServer-Win64-Shipping.exe ---\"; find / -xdev -iname \"MoriaServer-Win64-Shipping*\" 2>/dev/null; find / -iname \"MoriaServer-Win64-Shipping*\" 2>/dev/null; echo \"[run] --- END DIAGNOSTIC ---\"; set -e; BIN=./Moria/Binaries/Win64/MoriaServer-Win64-Shipping.exe; if [ ! -f \"$BIN\" ]; then echo \"[run] ERROR: server binary not found at $BIN. Run Install first.\"; exit 1; fi; CFG=./MoriaServerConfig.ini; if [ -f \"$CFG\" ]; then sed -i \"s/^ServerName=.*/ServerName=${sv_name}/\" \"$CFG\" || echo \"ServerName=${name}\" >> \"$CFG\"; sed -i \"s/^ServerPassword=.*/ServerPassword=${sv_password}/\" \"$CFG\" || echo \"ServerPassword=${password}\" >> \"$CFG\"; sed -i \"s/^MaxPlayers=.*/MaxPlayers=${max_players}/\" \"$CFG\" || echo \"MaxPlayers=${players}\" >> \"$CFG\"; else echo \"[run] No config found yet, server will generate defaults on this launch\"; fi; echo \"[run] Starting Return to Moria (no Steam check, no re-download, no re-patch)\"; exec box64 /wine-installer/bin/wine \"$BIN\" Moria 2>&1'",
+        "stop": "sh -c 'kill -SIGINT 1'",
         "environmentVars": {
             "BOX64_DYNAREC_STRONGMEM": "1",
             "BOX64_DYNAREC_X87DOUBLE": "1",
@@ -68,18 +135,15 @@
     "supportedEnvironments": [
         {
             "type": "docker",
-            "image": "tsxcloud/steamcmd-wine-ntsync:latest",
+            "image": "tsxcloud/moria-arm:latest",
             "portBindings": [
-                "0.0.0.0:${port}:${port}/udp"
+                "0.0.0.0:${port}:7777/udp"
             ]
         }
     ],
     "requirements": {
         "os": "linux",
-        "arch": "arm64",
-        "binaries": [
-            "unzip"
-        ]
+        "arch": "arm64"
     },
     "stats": {
         "type": ""
