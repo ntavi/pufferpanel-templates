@@ -2,6 +2,36 @@
     "type": "returntomoria",
     "display": "Lord of the Rings: Return to Moria Dedicated Server ARM64",
     "data": {
+        "combat_difficulty": {
+            "type": "options",
+            "value": "default",
+            "display": "Combat Difficulty",
+            "desc": "The base enemy damage and hit points.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
         "difficult": {
             "type": "options",
             "value": "normal",
@@ -10,24 +40,24 @@
             "userEdit": true,
             "options": [
                 {
-                    "value": "Story",
-                    "display": "story"
+                    "value": "story",
+                    "display": "Story"
                 },
                 {
-                    "value": "Solo",
-                    "display": "solo"
+                    "value": "solo",
+                    "display": "Solo"
                 },
                 {
-                    "value": "Normal",
-                    "display": "normal"
+                    "value": "normal",
+                    "display": "Normal"
                 },
                 {
-                    "value": "Hard",
-                    "display": "hard"
+                    "value": "hard",
+                    "display": "Hard"
                 },
                 {
-                    "value": "Custom",
-                    "display": "custom"
+                    "value": "custom",
+                    "display": "Custom"
                 }
             ]
         },
@@ -37,8 +67,67 @@
             "display": "DLC",
             "desc": "Latest is \"DurinsFolk\"",
             "required": true,
+            "userEdit": true
+        },
+        "enemy_aggression": {
+            "type": "options",
+            "value": "high",
+            "display": "Enemy Aggression",
+            "desc": "How often enemies attack and how many will attack at once.",
+            "required": true,
             "userEdit": true,
-            "internal": false
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
+        "horde_frequency": {
+            "type": "options",
+            "value": "default",
+            "display": "Horde Frequency",
+            "desc": "How often noisy actions will trigger a horde of orcs.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
         },
         "max_players": {
             "type": "integer",
@@ -48,13 +137,73 @@
             "required": true,
             "userEdit": true
         },
+        "mining_drops": {
+            "type": "options",
+            "value": "default",
+            "display": "Mining Drops",
+            "desc": "Volume of ore that drops from each vein.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
+        "patrol_frequency": {
+            "type": "options",
+            "value": "default",
+            "display": "Patrol Frequency",
+            "desc": "How often orc and enemy groups spawn.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
         "port": {
             "type": "integer",
             "value": 7777,
             "display": "Game Port",
             "desc": "UDP port the server will bind to. NOTE: changing this only remaps the host-side port; the container always listens on 7777 internally per the moria-arm image, so do not edit ListenPort inside MoriaServerConfig.ini.",
             "required": true,
-            "userEdit": false
+            "userEdit": true
         },
         "seed": {
             "type": "string",
@@ -62,6 +211,66 @@
             "display": "Seed",
             "required": true,
             "userEdit": true
+        },
+        "siege_frequency": {
+            "type": "options",
+            "value": "default",
+            "display": "Siege Frequency",
+            "desc": "How often orcs will target and attack a dwarf base.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
+        "survival_difficulty": {
+            "type": "options",
+            "value": "default",
+            "display": "Survival Difficulty",
+            "desc": "The strength of various buffs, speed a dwarf succumbs to despair and the decay rates of stamina, energy and hunger.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
         },
         "sv_name": {
             "type": "string",
@@ -79,6 +288,43 @@
             "required": false,
             "userEdit": true
         },
+        "world_drops": {
+            "type": "options",
+            "value": "default",
+            "display": "WorldDrops",
+            "desc": "The drop rates of rewards for defeating orcs and enemies.",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "verylow",
+                    "display": "Very Low"
+                },
+                {
+                    "value": "low",
+                    "display": "Low"
+                },
+                {
+                    "value": "default",
+                    "display": "Default"
+                },
+                {
+                    "value": "high",
+                    "display": "High"
+                },
+                {
+                    "value": "veryhigh",
+                    "display": "Very High"
+                }
+            ]
+        },
+        "world_name": {
+            "type": "string",
+            "value": "",
+            "display": "World Name",
+            "required": false,
+            "userEdit": true
+        },
         "world_type": {
             "type": "options",
             "value": "campaign",
@@ -87,16 +333,50 @@
             "userEdit": true,
             "options": [
                 {
-                    "value": "Campaign",
-                    "display": "campaign"
+                    "value": "campaign",
+                    "display": "Campaign"
                 },
                 {
-                    "value": "Sandbox",
-                    "display": "sandbox"
+                    "value": "sandbox",
+                    "display": "Sandbox"
                 }
             ]
         }
     },
+    "groups": [
+        {
+            "display": "General",
+            "description": "",
+            "variables": [
+                "difficult",
+                "dlc",
+                "max_players",
+                "port",
+                "seed",
+                "sv_name",
+                "sv_password",
+                "world_name",
+                "world_type"
+            ],
+            "order": 1
+        },
+        {
+            "if": "difficult == 'custom'",
+            "display": "Custom Difficult",
+            "description": "",
+            "variables": [
+                "combat_difficulty",
+                "enemy_aggression",
+                "survival_difficulty",
+                "mining_drops",
+                "world_drops",
+                "horde_frequency",
+                "siege_frequency",
+                "patrol_frequency"
+            ],
+            "order": 2
+        }
+    ],
     "install": [
         {
             "if": "env == 'docker'",
@@ -108,7 +388,7 @@
         {
             "type": "writefile",
             "target": "MoriaServerConfig.ini",
-            "text": "; Configuration file for the dedicated server.\r\n; Only edit this configuration when the server is offline.\r\n; This list may be overwritten when changes are made in-game.\r\n\r\n\r\n[Main]\r\n; If a password is specified, players will need to enter a password to join the server.\r\n; Case-sensitive.\r\nOptionalPassword=${sv_password}\r\n\r\n\r\n[World]\r\n; Name of the saved world to load. If it doesn't exist, create it\r\n; with the properties defined in the [World.Create] section.\r\nName=${sv_name}\r\n\r\n; The file name of the world to load. Helpful if you have multiple worlds with the same name.\r\n; Note that renaming world files is not currently supported.\r\nOptionalWorldFilename=\r\n\r\n\r\n[World.Create]\r\n; World generation parameters, only for newly created worlds.\r\n\r\n; Type of world to create:\r\n;  * campaign\r\n;  * sandbox\r\nType=${world_type}\r\n\r\n; Seed for world generation:\r\n;  * random - Generates a random seed.\r\n;  * <integer> - Use the given number.\r\nSeed=${seed}\r\n\r\n; Specify world difficulty:\r\n;  * story: Ideal for players who want to experience the story without much danger.\r\n;  * solo: Ideal for a single dwarf.\r\n;  * normal: Ideal for a small company of dwarves.\r\n;  * hard: Ideal for a large company of dwarves.\r\n;  * custom: Use customizations for each category of difficulty.\r\nDifficulty.Preset=${difficult}\r\n\r\n; Custom difficulty properties, used only if the \"Difficulty.Preset\" property is set to custom.\r\n; Acceptable values are verylow, low, default, high and veryhigh.\r\n; The base enemy damage and hit points.\r\nDifficulty.Custom.CombatDifficulty=default\r\n; How often enemies attack and how many will attack at once.\r\nDifficulty.Custom.EnemyAggression=high\r\n; The strength of various buffs, speed a dwarf succumbs to despair and\r\n; the decay rates of stamina, energy and hunger.\r\nDifficulty.Custom.SurvivalDifficulty=default\r\n; Volume of ore that drops from each vein.\r\nDifficulty.Custom.MiningDrops=default\r\n; The drop rates of rewards for defeating orcs and enemies.\r\nDifficulty.Custom.WorldDrops=default\r\n; How often noisy actions will trigger a horde of orcs.\r\nDifficulty.Custom.HordeFrequency=default\r\n; How often orcs will target and attack a dwarf base.\r\nDifficulty.Custom.SiegeFrequency=default\r\n; How often orc and enemy groups spawn.\r\nDifficulty.Custom.PatrolFrequency=default\r\n\r\n; Comma separated list of DLCs enabled which will be used when creating a new world.\r\n; Once DLC is enabled for a world, it cannot be disabled.\r\n; \"DLC1,DLC2,DLC3\" etc\r\n; By default this will always be populated with every possible DLC\r\n; If you wish to create new worlds with all possible DLCs enabled, leave this with default values.\r\nOptionalDLC.Array=${dlc}\r\n\r\n; Comma separated list of DLCs to apply when upgrading worlds without them.\r\n; By default this will always be empty as upgraded worlds cannot go back.\r\n; Most commonly used when loading old worlds after new DLC content is released.\r\n; If you wish to upgrade your existing worlds to new DLC content please fill this in with OptionalDLC values above.\r\nUpgradeOptionalDLC.Array=\"\"\r\n\r\n\r\n[Host]\r\n\r\n; Local IP address to bind on the server.\r\n; Normally leave this empty.\r\n; Possible values:\r\n; * Empty value for default (bind all adapters.)\r\n; * <IPv4> or <IPv6> ... manually specify the IP address.\r\nListenAddress=0.0.0.0\r\n\r\n; Port bound by the server for incoming connections.\r\n; You must allow TCP and UDP traffic on your firewall and may need to set up port forwarding.\r\n; Possible values:\r\n;  * -1 ... use the default engine port (7777)\r\n;  * <integer> ... manually specify the port.\r\nListenPort=${port}\r\n\r\n; Host reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally set this to \"auto\".\r\n; If this machine and all of your friends are playing on a LAN, set this to \"local\" to avoid having to set up port forwarding.\r\n; If there is an issue with automatic detection, you can specify your server's IP address directly.\r\n; Possible values:\r\n;  * auto ... detect public IP address. For public servers or servers behind NAT, proxy,\r\n;             or in a container with properly configured port mapping or port forwarding.\r\n;  * local ... automatically detect local IP address. For LAN games and servers with a public IP address.\r\n;  * <IPv4> or <IPv6> ... manually specify the IP address clients should connect to.\r\nAdvertiseAddress=auto\r\n\r\n; Port reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally leave this empty.\r\n; Possible values:\r\n;  * <empty> ... use the ListenPort. To be used when connecting directly or via port forwarding.\r\n;  * <integer> ... manually specify the port. To be used when the server\r\n;                  listen port is mapped to a different, exposed port. This is rare.\r\nAdvertisePort=\r\n\r\n; If you fail to host on launch, the maximum number of seconds to retry.\r\nInitialConnectionRetryTime=120\r\n\r\n; If your hosted session drops, the maximum number of seconds to try to rehost.\r\nAfterDisconnectionRetryTime=600\r\n\r\n\r\n[Console]\r\n; Open the console window so you can type commands. (true or false)\r\n; Note: To close the app, you will need to kill the process in Windows Task Manager.\r\nEnabled=true\r\n\r\n\r\n[Performance]\r\n; Frames per second to tick the server.\r\n; Typically leave this at 60. Higher values are unlikely to improve a dedicated server.\r\n; If your server uses too much CPU, you might try 30 fps instead.\r\nServerFPS=60\r\n; Maximum number of areas to keep loaded at once, a number between 4 and 32.\r\n; This number greatly impacts memory, CPU usage and bandwidth.\r\n; The default is 12 loaded areas, which generally supports 8 player sessions well.\r\n; If you wish to improve performance, reducing to 8 loaded areas supports 4 player sessions very well.\r\n; Increasing this number above 12 may decrease the number of loading walls you see,\r\n; at the cost of much higher memory and CPU usage, as more enemies will need to be simulated to fill those areas.\r\nLoadedAreaLimit=12\r\n"
+            "text": "; Configuration file for the dedicated server.\r\n; Only edit this configuration when the server is offline.\r\n; This list may be overwritten when changes are made in-game.\r\n\r\n\r\n[Main]\r\n; If a password is specified, players will need to enter a password to join the server.\r\n; Case-sensitive.\r\nOptionalPassword=${sv_password}\r\n\r\n\r\n[World]\r\n; Name of the saved world to load. If it doesn't exist, create it\r\n; with the properties defined in the [World.Create] section.\r\nName=${sv_name}\r\n\r\n; The file name of the world to load. Helpful if you have multiple worlds with the same name.\r\n; Note that renaming world files is not currently supported.\r\nOptionalWorldFilename=${world_name}\r\n\r\n\r\n[World.Create]\r\n; World generation parameters, only for newly created worlds.\r\n\r\n; Type of world to create:\r\n;  * campaign\r\n;  * sandbox\r\nType=${world_type}\r\n\r\n; Seed for world generation:\r\n;  * random - Generates a random seed.\r\n;  * <integer> - Use the given number.\r\nSeed=${seed}\r\n\r\n; Specify world difficulty:\r\n;  * story: Ideal for players who want to experience the story without much danger.\r\n;  * solo: Ideal for a single dwarf.\r\n;  * normal: Ideal for a small company of dwarves.\r\n;  * hard: Ideal for a large company of dwarves.\r\n;  * custom: Use customizations for each category of difficulty.\r\nDifficulty.Preset=${difficult}\r\n\r\n; Custom difficulty properties, used only if the \"Difficulty.Preset\" property is set to custom.\r\n; Acceptable values are verylow, low, default, high and veryhigh.\r\n; The base enemy damage and hit points.\r\nDifficulty.Custom.CombatDifficulty=${combat_difficulty}\r\n; How often enemies attack and how many will attack at once.\r\nDifficulty.Custom.EnemyAggression=${enemy_aggression}\r\n; The strength of various buffs, speed a dwarf succumbs to despair and\r\n; the decay rates of stamina, energy and hunger.\r\nDifficulty.Custom.SurvivalDifficulty=${survival_difficulty}\r\n; Volume of ore that drops from each vein.\r\nDifficulty.Custom.MiningDrops=${mining_drops}\r\n; The drop rates of rewards for defeating orcs and enemies.\r\nDifficulty.Custom.WorldDrops=${world_drops}\r\n; How often noisy actions will trigger a horde of orcs.\r\nDifficulty.Custom.HordeFrequency=${horde_frequency}\r\n; How often orcs will target and attack a dwarf base.\r\nDifficulty.Custom.SiegeFrequency=${siege_frequency}\r\n; How often orc and enemy groups spawn.\r\nDifficulty.Custom.PatrolFrequency=${patrol_frequency}\r\n\r\n; Comma separated list of DLCs enabled which will be used when creating a new world.\r\n; Once DLC is enabled for a world, it cannot be disabled.\r\n; \"DLC1,DLC2,DLC3\" etc\r\n; By default this will always be populated with every possible DLC\r\n; If you wish to create new worlds with all possible DLCs enabled, leave this with default values.\r\nOptionalDLC.Array=${dlc}\r\n\r\n; Comma separated list of DLCs to apply when upgrading worlds without them.\r\n; By default this will always be empty as upgraded worlds cannot go back.\r\n; Most commonly used when loading old worlds after new DLC content is released.\r\n; If you wish to upgrade your existing worlds to new DLC content please fill this in with OptionalDLC values above.\r\nUpgradeOptionalDLC.Array=\"\"\r\n\r\n\r\n[Host]\r\n\r\n; Local IP address to bind on the server.\r\n; Normally leave this empty.\r\n; Possible values:\r\n; * Empty value for default (bind all adapters.)\r\n; * <IPv4> or <IPv6> ... manually specify the IP address.\r\nListenAddress=0.0.0.0\r\n\r\n; Port bound by the server for incoming connections.\r\n; You must allow TCP and UDP traffic on your firewall and may need to set up port forwarding.\r\n; Possible values:\r\n;  * -1 ... use the default engine port (7777)\r\n;  * <integer> ... manually specify the port.\r\nListenPort=${port}\r\n\r\n; Host reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally set this to \"auto\".\r\n; If this machine and all of your friends are playing on a LAN, set this to \"local\" to avoid having to set up port forwarding.\r\n; If there is an issue with automatic detection, you can specify your server's IP address directly.\r\n; Possible values:\r\n;  * auto ... detect public IP address. For public servers or servers behind NAT, proxy,\r\n;             or in a container with properly configured port mapping or port forwarding.\r\n;  * local ... automatically detect local IP address. For LAN games and servers with a public IP address.\r\n;  * <IPv4> or <IPv6> ... manually specify the IP address clients should connect to.\r\nAdvertiseAddress=auto\r\n\r\n; Port reported to clients. Clients will try to connect it when joining a hosted session.\r\n; Normally leave this empty.\r\n; Possible values:\r\n;  * <empty> ... use the ListenPort. To be used when connecting directly or via port forwarding.\r\n;  * <integer> ... manually specify the port. To be used when the server\r\n;                  listen port is mapped to a different, exposed port. This is rare.\r\nAdvertisePort=\r\n\r\n; If you fail to host on launch, the maximum number of seconds to retry.\r\nInitialConnectionRetryTime=120\r\n\r\n; If your hosted session drops, the maximum number of seconds to try to rehost.\r\nAfterDisconnectionRetryTime=600\r\n\r\n\r\n[Console]\r\n; Open the console window so you can type commands. (true or false)\r\n; Note: To close the app, you will need to kill the process in Windows Task Manager.\r\nEnabled=true\r\n\r\n\r\n[Performance]\r\n; Frames per second to tick the server.\r\n; Typically leave this at 60. Higher values are unlikely to improve a dedicated server.\r\n; If your server uses too much CPU, you might try 30 fps instead.\r\nServerFPS=60\r\n; Maximum number of areas to keep loaded at once, a number between 4 and 32.\r\n; This number greatly impacts memory, CPU usage and bandwidth.\r\n; The default is 12 loaded areas, which generally supports 8 player sessions well.\r\n; If you wish to improve performance, reducing to 8 loaded areas supports 4 player sessions very well.\r\n; Increasing this number above 12 may decrease the number of loading walls you see,\r\n; at the cost of much higher memory and CPU usage, as more enemies will need to be simulated to fill those areas.\r\nLoadedAreaLimit=12\r\n"
         }
     ],
     "uninstall": null,
