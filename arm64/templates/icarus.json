@@ -1,0 +1,128 @@
+{
+    "type": "icarus",
+    "display": "Icarus Dedicated Server ARM64",
+    "data": {
+        "admin_password": {
+            "type": "string",
+            "value": "",
+            "display": "Admin Password",
+            "desc": "Password required to use in-game admin commands (AdminPassword). Leave blank for none, but this is strongly recommended to set.",
+            "required": false,
+            "userEdit": true
+        },
+        "name": {
+            "type": "string",
+            "value": "Icarus Server",
+            "display": "Server Name",
+            "desc": "Choose your server name (SteamServerName / SessionName).",
+            "required": true,
+            "userEdit": true
+        },
+        "password": {
+            "type": "string",
+            "value": "",
+            "display": "Join Password",
+            "desc": "Set the join password for your server (JoinPassword). Leave blank for none.",
+            "required": false,
+            "userEdit": true
+        },
+        "players": {
+            "type": "integer",
+            "value": 8,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players (MaxPlayers).",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 17777,
+            "display": "Game Port",
+            "desc": "UDP port the server will bind to (-Port).",
+            "required": true,
+            "userEdit": true
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 27015,
+            "display": "Query Port",
+            "desc": "UDP query port used for server listing (-QueryPort).",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "if": "env == 'host'",
+            "type": "steamgamedl",
+            "appId": "2089300"
+        },
+        {
+            "if": "env == 'docker'",
+            "type": "command",
+            "commands": [
+                "sh -c 'mkdir -p /tmp/icarus && until [ -f /tmp/icarus/IcarusServer.exe ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2089300 +quit > /dev/null; else steamcmd +@sSteamCmdForcePlatformType windows +login anonymous +app_info_print 2089300 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +@sSteamCmdForcePlatformType windows +force_install_dir /tmp/icarus +login anonymous +app_update 2089300 validate +quit; if [ ! -f /tmp/icarus/IcarusServer.exe ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/icarus/. . && rm -rf /tmp/icarus'"
+            ]
+        },
+        {
+            "type": "command",
+            "commands": [
+                "mkdir -p ./Icarus/Saved/Config/WindowsServer"
+            ]
+        },
+        {
+            "type": "writefile",
+            "text": "[/Script/Icarus.IcarusServerSettings]\r\nSessionName=${name}\r\nJoinPassword=${password}\r\nAdminPassword=${admin_password}\r\nMaxPlayers=${players}\r\n",
+            "target": "./Icarus/Saved/Config/WindowsServer/ServerSettings.ini"
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'id -u icarus >/dev/null 2>&1 || useradd -m icarus || adduser -D icarus; mkdir -p /home/icarus/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/icarus/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/icarus/.steam/sdk64/; fi; CFG=./Icarus/Saved/Config/WindowsServer/ServerSettings.ini; mkdir -p ./Icarus/Saved/Config/WindowsServer; if [ -f \"$CFG\" ]; then sed -i \"s/^SessionName=.*/SessionName=${name}/\" \"$CFG\" || echo \"SessionName=${name}\" >> \"$CFG\"; sed -i \"s/^JoinPassword=.*/JoinPassword=${password}/\" \"$CFG\" || echo \"JoinPassword=${password}\" >> \"$CFG\"; sed -i \"s/^AdminPassword=.*/AdminPassword=${admin_password}/\" \"$CFG\" || echo \"AdminPassword=${admin_password}\" >> \"$CFG\"; sed -i \"s/^MaxPlayers=.*/MaxPlayers=${players}/\" \"$CFG\" || echo \"MaxPlayers=${players}\" >> \"$CFG\"; fi; chown -R icarus:icarus . /home/icarus/.steam; exec runuser -u icarus -- env PATH=\"/wine-installer/bin:$PATH\" WINEPREFIX=\"/home/icarus/.wine\" xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" box64 wine ./IcarusServer.exe -SteamServerName=\"${name}\" -Port=${port} -QueryPort=${query_port} -Log'",
+        "stopCode": 2,
+        "environmentVars": {
+            "BOX64_DYNAREC_STRONGMEM": "1",
+            "BOX64_DYNAREC_X87DOUBLE": "1",
+            "BOX64_MALLOC_PERTURB": "0",
+            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
+            "WINEDEBUG": "-all"
+        },
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker"
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "tsxcloud/steamcmd-wine-ntsync:latest",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "wine"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "icarus-arm64"
+}
