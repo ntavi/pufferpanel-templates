@@ -1,0 +1,150 @@
+{
+    "type": "fivem-arm64",
+    "display": "FiveM Dedicated Server ARM64 (txAdmin)",
+    "icon": "fivem",
+    "data": {
+        "fivem_license": {
+            "type": "string",
+            "value": "",
+            "display": "FiveM License Key",
+            "desc": "Required to start the service. Get your key at https://keymaster.fivem.net/",
+            "required": true,
+            "userEdit": true
+        },
+        "fivem_version": {
+            "type": "string",
+            "value": "recommended",
+            "display": "FiveM Version",
+            "desc": "Use 'recommended', 'latest', or a specific build like 6013-d8ae399d15680da569022f57ab7f2474d307c821. Invalid values fall back to recommended.",
+            "required": true,
+            "userEdit": true
+        },
+        "max_players": {
+            "type": "integer",
+            "value": 48,
+            "display": "Max Players",
+            "desc": "Maximum number of simultaneous players (sv_maxclients).",
+            "required": true,
+            "userEdit": true
+        },
+        "port": {
+            "type": "integer",
+            "value": 30120,
+            "display": "Game Port",
+            "desc": "TCP/UDP port the server will bind to.",
+            "required": true,
+            "userEdit": false
+        },
+        "server_hostname": {
+            "type": "string",
+            "value": "My new FXServer!",
+            "display": "Server Hostname",
+            "desc": "The name that shows up in the server browser (sv_hostname).",
+            "required": true,
+            "userEdit": true
+        },
+        "steam_webapikey": {
+            "type": "string",
+            "value": "none",
+            "display": "Steam Web API Key",
+            "desc": "Use your Steam WebApiKey or leave as 'none'. Get a key at https://steamcommunity.com/dev/apikey/",
+            "required": true,
+            "userEdit": true
+        },
+        "txadmin_enable": {
+            "type": "boolean",
+            "value": true,
+            "display": "Enable txAdmin",
+            "desc": "When enabled, the server boots into txAdmin's setup/monitor mode instead of directly executing server.cfg.",
+            "required": true,
+            "userEdit": true
+        },
+        "txadmin_port": {
+            "type": "integer",
+            "value": 40120,
+            "display": "txAdmin Port",
+            "desc": "TCP port for the txAdmin web panel.",
+            "required": true,
+            "userEdit": true
+        }
+    },
+    "install": [
+        {
+            "type": "command",
+            "commands": [
+                "apt-get update",
+                "apt-get -y install tar xz-utils curl git"
+            ]
+        },
+        {
+            "type": "mkdir",
+            "target": "fivem/resources"
+        },
+        {
+            "type": "writefile",
+            "target": "fivem/install.sh",
+            "text": "#!/bin/sh\nset -e\n\nextract_json_field() {\n  echo \"$1\" | grep -o \"\\\"$2\\\":\\\"[^\\\"]*\\\"\" | sed \"s/\\\"$2\\\":\\\"//;s/\\\"$//\"\n}\n\necho updating citizenfx resource files\nrm -rf /tmp/cfx-server-data\ngit clone https://github.com/citizenfx/cfx-server-data.git /tmp/cfx-server-data\ncp -Rf /tmp/cfx-server-data/resources/* resources/\nrm -rf /tmp/cfx-server-data\n\nRELEASE_PAGE=$(curl -sSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)\nCHANGELOGS_PAGE=$(curl -sSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)\nFIVEM_VERSION=${fivem_version}\n\nif [ \"$FIVEM_VERSION\" = recommended ] || [ -z \"$FIVEM_VERSION\" ]; then\n  DOWNLOAD_LINK=$(extract_json_field \"$CHANGELOGS_PAGE\" recommended_download)\nelif [ \"$FIVEM_VERSION\" = latest ]; then\n  DOWNLOAD_LINK=$(extract_json_field \"$CHANGELOGS_PAGE\" latest_download)\nelse\n  VERSION_PATH=$(echo \"$RELEASE_PAGE\" | grep -Eo '\".*tar.xz\"' | tr -d '\"' | sed 's#^\\./##' | grep -i \"$FIVEM_VERSION\" | head -n1)\n  if [ -z \"$VERSION_PATH\" ]; then\n    echo defaulting to recommended, requested version not found\n    DOWNLOAD_LINK=$(extract_json_field \"$CHANGELOGS_PAGE\" recommended_download)\n  else\n    DOWNLOAD_LINK=https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/$VERSION_PATH\n  fi\nfi\n\necho Downloading: $DOWNLOAD_LINK\ncurl -sSL \"$DOWNLOAD_LINK\" -o fx.tar.xz\n\necho Extracting fivem files\ntar xf fx.tar.xz\nrm -f fx.tar.xz run.sh\n\nif [ -e server.cfg ]; then\n  echo Skipping default server.cfg, already exists\nelse\n  echo Downloading default fivem config\n  curl -sSL https://raw.githubusercontent.com/parkervcp/eggs/master/game_eggs/gta/fivem/server.cfg -o server.cfg\nfi\n\nmkdir -p logs/\necho install complete\n"
+        },
+        {
+            "type": "command",
+            "commands": [
+                "sh -c 'cd fivem && sh install.sh && rm -f install.sh'"
+            ]
+        },
+        {
+            "type": "writefile",
+            "target": "fivem/start.sh",
+            "text": "#!/bin/sh\nset -e\ncd \"$(dirname \"$0\")\"\n\nsed -i \"s/^endpoint_add_tcp.*/endpoint_add_tcp \\\"0.0.0.0:${port}\\\"/\" server.cfg || echo \"endpoint_add_tcp \\\"0.0.0.0:${port}\\\"\" >> server.cfg\nsed -i \"s/^endpoint_add_udp.*/endpoint_add_udp \\\"0.0.0.0:${port}\\\"/\" server.cfg || echo \"endpoint_add_udp \\\"0.0.0.0:${port}\\\"\" >> server.cfg\nsed -i \"s/^sv_hostname.*/sv_hostname \\\"${server_hostname}\\\"/\" server.cfg || echo \"sv_hostname \\\"${server_hostname}\\\"\" >> server.cfg\nsed -i \"s/^sv_maxclients.*/sv_maxclients ${max_players}/\" server.cfg || echo \"sv_maxclients ${max_players}\" >> server.cfg\nsed -i \"s/^set sv_licenseKey.*/set sv_licenseKey ${fivem_license}/\" server.cfg || echo \"set sv_licenseKey ${fivem_license}\" >> server.cfg\nsed -i \"s/^set steam_webApiKey.*/set steam_webApiKey ${steam_webapikey}/\" server.cfg || echo \"set steam_webApiKey ${steam_webapikey}\" >> server.cfg\n\nexport HOME=\"$(pwd)\"\n\nEXEC_ARG=\"+exec server.cfg\"\nif [ \"${txadmin_enable}\" = true ]; then\n  EXEC_ARG=\"\"\nfi\n\n# This mirrors the proven working Pterodactyl egg startup line exactly:\n# FEXInterpreter wraps the bundled musl loader directly, which in turn\n# loads FXServer with the correct library search path. This avoids\n# relying on binfmt_misc auto-routing (which can be hijacked by a\n# conflicting QEMU handler also present on this image) since FEX is\n# invoked explicitly here, not via kernel exec interception.\nexec FEXInterpreter ./alpine/opt/cfx-server/ld-musl-x86_64.so.1 \\\n  --library-path \"./alpine/usr/lib/v8/:./alpine/lib/:./alpine/usr/lib/\" \\\n  -- ./alpine/opt/cfx-server/FXServer \\\n  +set citizen_dir \"$(pwd)/alpine/opt/cfx-server/citizen/\" \\\n  +set sv_licenseKey ${fivem_license} \\\n  +set steam_webApiKey ${steam_webapikey} \\\n  +set sv_maxplayers ${max_players} \\\n  +set serverProfile default \\\n  +set txAdminPort ${txadmin_port} \\\n  $EXEC_ARG\n"
+        }
+    ],
+    "uninstall": null,
+    "run": {
+        "command": "sh -c 'cd fivem && chmod +x start.sh && sh start.sh'",
+        "stop": "^C",
+        "stdin": {
+            "type": "stdin"
+        },
+        "autostart": false,
+        "autorecover": false,
+        "autorestart": false
+    },
+    "environment": {
+        "type": "docker",
+        "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
+        "portBindings": [
+            "0.0.0.0:${port}:${port}/tcp",
+            "0.0.0.0:${port}:${port}/udp",
+            "0.0.0.0:${txadmin_port}:${txadmin_port}/tcp"
+        ]
+    },
+    "supportedEnvironments": [
+        {
+            "type": "docker",
+            "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
+            "portBindings": [
+                "0.0.0.0:${port}:${port}/tcp",
+                "0.0.0.0:${port}:${port}/udp",
+                "0.0.0.0:${txadmin_port}:${txadmin_port}/tcp"
+            ]
+        }
+    ],
+    "requirements": {
+        "os": "linux",
+        "arch": "arm64",
+        "binaries": [
+            "curl",
+            "git"
+        ]
+    },
+    "stats": {
+        "type": ""
+    },
+    "query": {
+        "type": ""
+    },
+    "keepAlive": {
+        "frequency": "",
+        "command": ""
+    },
+    "name": "fivem-arm64"
+}
