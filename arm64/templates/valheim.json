@@ -1,20 +1,21 @@
 {
-    "type": "valheim",
+    "type": "valheim-arm64",
     "display": "Valheim Dedicated Server ARM64",
+    "icon": "valheim",
     "data": {
         "modpack": {
             "type": "string",
             "value": "",
-            "display": "Modpack to run with",
-            "desc": "Open https://thunderstore.io in new tab and right 'manual download' click > copy link. Paste it here if you wish to use this modpack.",
+            "display": "Modpack URL",
+            "desc": "Open https://thunderstore.io, right-click 'manual download' > copy link. Paste it here to use a modpack.",
             "required": false,
             "userEdit": true
         },
         "name": {
             "type": "string",
             "value": "Valheim Server",
-            "display": "Name",
-            "desc": "Choose your servername.",
+            "display": "Server Name",
+            "desc": "Choose your server name.",
             "required": true,
             "userEdit": true
         },
@@ -30,7 +31,7 @@
             "type": "integer",
             "value": 2456,
             "display": "Port",
-            "desc": "What port to bind the server to.",
+            "desc": "The main game port to bind the server to.",
             "required": true,
             "userEdit": false
         },
@@ -45,7 +46,7 @@
         "world": {
             "type": "string",
             "value": "VHWorld",
-            "display": "World",
+            "display": "World Name",
             "desc": "What worldmap name to use.",
             "required": true,
             "userEdit": true
@@ -53,15 +54,21 @@
     },
     "install": [
         {
-            "if": "env == 'host'",
-            "type": "steamgamedl",
-            "appId": "896660"
-        },
-        {
-            "if": "env == 'docker'",
             "type": "command",
             "commands": [
-                "sh -c 'mkdir -p /tmp/valheim && until [ -f /tmp/valheim/valheim_server.x86_64 ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 896660 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 896660 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/valheim +login anonymous +app_update 896660 validate +quit; if [ ! -f /tmp/valheim/valheim_server.x86_64 ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/valheim/. . && rm -rf /tmp/valheim'"
+                "apt-get update",
+                "apt-get -y install tar xz-utils curl git unzip"
+            ]
+        },
+        {
+            "type": "writefile",
+            "target": "install.sh",
+            "text": "#!/bin/sh\nset -e\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\n\necho \"Downloading x86_64 RootFS for FEX...\"\nFEXRootFSFetcher -y -x --distro-name=ubuntu --distro-version=22.04\n\necho \"Installing SteamCMD...\"\nmkdir -p steamcmd\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C steamcmd\nrm steamcmd.tar.gz\n\necho \"Installing Valheim...\"\nFEXInterpreter ./steamcmd/steamcmd.sh +force_install_dir \"$(pwd)\" +login anonymous +app_update 896660 validate +quit\n\necho \"Install Complete!\"\n"
+        },
+        {
+            "type": "command",
+            "commands": [
+                "sh install.sh && rm -f install.sh"
             ]
         },
         {
@@ -75,28 +82,22 @@
             "if": "modpack != ''",
             "type": "command",
             "commands": [
-                "unzip ./denikson-BepInExPack_Valheim*.zip -d ./bepin_temp/",
+                "unzip -o ./denikson-BepInExPack_Valheim*.zip -d ./bepin_temp/",
                 "cp -r ./bepin_temp/BepInExPack_Valheim/. ./",
-                "rm -r ./bepin_temp"
+                "rm -r ./bepin_temp",
+                "rm ./denikson-BepInExPack_Valheim*.zip"
             ]
         },
         {
-            "type": "command",
-            "commands": [
-                "chmod +x valheim_server.x86_64"
-            ]
+            "type": "writefile",
+            "text": "#!/bin/sh\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\nexport LD_LIBRARY_PATH=\"$(pwd)/linux64:$LD_LIBRARY_PATH\"\n\nchmod +x valheim_server.x86_64\nexec FEXInterpreter ./valheim_server.x86_64 -name \"${name}\" -port ${port} -world \"${world}\" -password \"${password}\" -public 1\n",
+            "target": "start.sh"
         }
     ],
     "uninstall": null,
     "run": {
-        "command": "box64 ./valheim_server.x86_64 -name ${name} -port ${port} -world ${world} -password ${password} -public 1",
+        "command": "sh start.sh",
         "stopCode": 2,
-        "environmentVars": {
-            "BOX64_DYNAREC_STRONGMEM": "1",
-            "BOX64_DYNAREC_X87DOUBLE": "1",
-            "BOX64_MALLOC_PERTURB": "0",
-            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
-        },
         "stdin": {
             "type": "stdin"
         },
@@ -105,12 +106,17 @@
         "autorestart": false
     },
     "environment": {
-        "type": "docker"
+        "type": "docker",
+        "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
+        "portBindings": [
+            "0.0.0.0:${port}:${port}/udp",
+            "0.0.0.0:${query_port}:${query_port}/udp"
+        ]
     },
     "supportedEnvironments": [
         {
             "type": "docker",
-            "image": "tsxcloud/valheim-arm:latest",
+            "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
             "portBindings": [
                 "0.0.0.0:${port}:${port}/udp",
                 "0.0.0.0:${query_port}:${query_port}/udp"
@@ -121,7 +127,10 @@
         "os": "linux",
         "arch": "arm64",
         "binaries": [
-            "unzip"
+            "curl",
+            "tar",
+            "unzip",
+            "git"
         ]
     },
     "stats": {
