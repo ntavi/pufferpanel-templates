@@ -1,6 +1,7 @@
 {
-    "type": "7daystodie",
+    "type": "7daystodie-arm64",
     "display": "7 Days to Die Dedicated Server ARM64",
+    "icon": "7daystodie",
     "data": {
         "game_difficulty": {
             "type": "integer",
@@ -109,34 +110,33 @@
     },
     "install": [
         {
-            "if": "env == 'host'",
-            "type": "steamgamedl",
-            "appId": "294420"
-        },
-        {
-            "if": "env == 'docker'",
             "type": "command",
             "commands": [
-                "sh -c 'mkdir -p /tmp/7dtd && until [ -f /tmp/7dtd/7DaysToDieServer.x86_64 ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 294420 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 294420 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/7dtd +login anonymous +app_update 294420 validate +quit; if [ ! -f /tmp/7dtd/7DaysToDieServer.x86_64 ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/7dtd/. . && rm -rf /tmp/7dtd'"
+                "apt-get update",
+                "apt-get -y install tar xz-utils curl git unzip"
             ]
         },
         {
+            "type": "writefile",
+            "text": "#!/bin/sh\nset -e\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\n\necho \"Downloading x86_64 RootFS for FEX...\"\nFEXRootFSFetcher -y -x --distro-name=ubuntu --distro-version=22.04\n\necho \"Installing SteamCMD...\"\nmkdir -p steamcmd\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C steamcmd\nrm steamcmd.tar.gz\n\necho \"Installing 7 Days to Die...\"\nFEXInterpreter ./steamcmd/steamcmd.sh +force_install_dir \"$(pwd)\" +login anonymous +app_update 294420 validate +quit\n\necho \"Install Complete!\"\n",
+            "target": "install.sh"
+        },
+        {
             "type": "command",
             "commands": [
-                "chmod +x 7DaysToDieServer.x86_64"
+                "sh install.sh && rm -f install.sh"
             ]
+        },
+        {
+            "type": "writefile",
+            "target": "start.sh",
+            "text": "#!/bin/sh\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\nexport LD_LIBRARY_PATH=\"$(pwd)/linux64:$LD_LIBRARY_PATH\"\n\nmkdir -p $HOME/.steam/sdk64\nif [ -f ./linux64/steamclient.so ]; then\n  cp ./linux64/steamclient.so $HOME/.steam/sdk64/\nfi\n\ncat > serverconfig.xml << EOF\n<?xml version=\"1.0\"?>\n<ServerSettings>\n  <property name=\"ServerName\" value=\"${name}\"/>\n  <property name=\"ServerPassword\" value=\"${password}\"/>\n  <property name=\"ServerPort\" value=\"${port}\"/>\n  <property name=\"ServerMaxPlayerCount\" value=\"${players}\"/>\n  <property name=\"GameWorld\" value=\"${world_name}\"/>\n  <property name=\"GameName\" value=\"${save_name}\"/>\n  <property name=\"WorldGenSeed\" value=\"${world_seed}\"/>\n  <property name=\"WorldGenSize\" value=\"${world_size}\"/>\n  <property name=\"GameDifficulty\" value=\"${game_difficulty}\"/>\n  <property name=\"GameMode\" value=\"${game_mode}\"/>\n  <property name=\"TelnetEnabled\" value=\"${telnet_enabled}\"/>\n  <property name=\"TelnetPort\" value=\"${telnet_port}\"/>\n  <property name=\"TelnetPassword\" value=\"${telnet_password}\"/>\n</ServerSettings>\nEOF\n\nchmod +x 7DaysToDieServer.x86_64\nexec FEXInterpreter ./7DaysToDieServer.x86_64 -logfile output.log -quit -batchmode -nographics -configfile=serverconfig.xml -dedicated\n"
         }
     ],
     "uninstall": null,
     "run": {
-        "command": "sh -c 'id -u sdtd >/dev/null 2>&1 || useradd -m sdtd || adduser -D sdtd; mkdir -p /home/sdtd/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/sdtd/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/sdtd/.steam/sdk64/; fi; chown -R sdtd:sdtd . /home/sdtd/.steam; cat > serverconfig.xml << EOF\n<?xml version=\"1.0\"?>\n<ServerSettings>\n  <property name=\"ServerName\" value=\"${name}\"/>\n  <property name=\"ServerPassword\" value=\"${password}\"/>\n  <property name=\"ServerPort\" value=\"${port}\"/>\n  <property name=\"ServerMaxPlayerCount\" value=\"${players}\"/>\n  <property name=\"GameWorld\" value=\"${world_name}\"/>\n  <property name=\"GameName\" value=\"${save_name}\"/>\n  <property name=\"WorldGenSeed\" value=\"${world_seed}\"/>\n  <property name=\"WorldGenSize\" value=\"${world_size}\"/>\n  <property name=\"GameDifficulty\" value=\"${game_difficulty}\"/>\n  <property name=\"GameMode\" value=\"${game_mode}\"/>\n  <property name=\"TelnetEnabled\" value=\"${telnet_enabled}\"/>\n  <property name=\"TelnetPort\" value=\"${telnet_port}\"/>\n  <property name=\"TelnetPassword\" value=\"${telnet_password}\"/>\n</ServerSettings>\nEOF\nchown sdtd:sdtd serverconfig.xml; exec runuser -u sdtd -- box64 ./7DaysToDieServer.x86_64 -logfile output.log -quit -batchmode -nographics -configfile=serverconfig.xml -dedicated'",
+        "command": "sh start.sh",
         "stopCode": 2,
-        "environmentVars": {
-            "BOX64_DYNAREC_STRONGMEM": "1",
-            "BOX64_DYNAREC_X87DOUBLE": "1",
-            "BOX64_MALLOC_PERTURB": "0",
-            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
-        },
         "stdin": {
             "type": "stdin"
         },
@@ -145,12 +145,18 @@
         "autorestart": false
     },
     "environment": {
-        "type": "docker"
+        "type": "docker",
+        "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
+        "portBindings": [
+            "0.0.0.0:${port}:${port}/udp",
+            "0.0.0.0:${port}:${port}/tcp",
+            "0.0.0.0:${telnet_port}:${telnet_port}/tcp"
+        ]
     },
     "supportedEnvironments": [
         {
             "type": "docker",
-            "image": "tsxcloud/valheim-arm:latest",
+            "image": "quintenqvd/pterodactyl_images:dev_fex_fivem",
             "portBindings": [
                 "0.0.0.0:${port}:${port}/udp",
                 "0.0.0.0:${port}:${port}/tcp",
@@ -160,7 +166,13 @@
     ],
     "requirements": {
         "os": "linux",
-        "arch": "arm64"
+        "arch": "arm64",
+        "binaries": [
+            "curl",
+            "tar",
+            "unzip",
+            "git"
+        ]
     },
     "stats": {
         "type": ""
