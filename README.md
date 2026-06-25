@@ -98,12 +98,13 @@ List by Letter:
 ### R
 | Game | ARM64 | Notes |
 |---------|------|-------|
+| [Return To Moria](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/return_to_moria.json) | ✅ | - |
 
 ### S
 | Game | ARM64 | Notes |
 |---------|------|-------|
 | [SCUM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/scum.json) | ❔ | - |
-| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/SonsOfTheForest.json) | ❌ | - |
+| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/sons_of_the_forest.json) | ❌ | - |
 | [Sunkenland](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/sunkenland.json) | ❔ | - |
 
 ### T
