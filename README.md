@@ -23,8 +23,8 @@ List by Letter:
 ### A
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [7 Days to Die](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/7days2die.json) | ✅ | - |
-| [ARK Survival Evolved](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/ark_survival_evolved.json) | ✅ | - |
+| [7 Days to Die](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/7days2die.json) | ✅ | - |
+| [ARK Survival Evolved](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/ark_survival_evolved.json) | ✅ | - |
 
 ### B
 | Game | ARM64 | Notes |
@@ -33,7 +33,7 @@ List by Letter:
 ### C
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Counter Strike 1.6](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/cs1.6.json) | ✅ | - |
+| [Counter Strike 1.6](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/cs1.6.json) | ✅ | - |
 
 ### D
 | Game | ARM64 | Notes |
@@ -42,12 +42,12 @@ List by Letter:
 ### E
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Enshrouded](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/enshrouded.json) | ✅ | - |
+| [Enshrouded](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/enshrouded.json) | ✅ | - |
 
 ### F
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [FiveM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/fivem.json) | ✅ | - |
+| [FiveM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/fivem.json) | ✅ | - |
 
 ### G
 | Game | ARM64 | Notes |
@@ -60,7 +60,7 @@ List by Letter:
 ### I
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Icarus](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/icarus.json) | ✅ | - |
+| [Icarus](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/icarus.json) | ✅ | - |
 
 ### J
 | Game | ARM64 | Notes |
@@ -89,7 +89,7 @@ List by Letter:
 ### P
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Palworld](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/palworld.json) | ✅ | - |
+| [Palworld](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/palworld.json) | ✅ | - |
 
 ### Q
 | Game | ARM64 | Notes |
@@ -102,9 +102,9 @@ List by Letter:
 ### S
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [SCUM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/scum.json) | ❔ | - |
-| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/SonsOfTheForest.json) | ❌ | - |
-| [Sunkenland](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/sunkenland.json) | ❔ | - |
+| [SCUM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/scum.json) | ❔ | - |
+| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/SonsOfTheForest.json) | ❌ | - |
+| [Sunkenland](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/sunkenland.json) | ❔ | - |
 
 ### T
 | Game | ARM64 | Notes |
@@ -117,8 +117,8 @@ List by Letter:
 ### V
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Valheim](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/valheim.json) | ✅ | - |
-| [V-Rising](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/vrising.json) | ✅ | - |
+| [Valheim](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/valheim.json) | ✅ | - |
+| [V-Rising](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/vrising.json) | ✅ | - |
 
 ### W
 | Game | ARM64 | Notes |
