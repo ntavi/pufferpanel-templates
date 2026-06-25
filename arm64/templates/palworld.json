@@ -1,71 +1,94 @@
 {
-    "type": "palworld",
+    "type": "palworld-arm64",
     "display": "Palworld Dedicated Server ARM64",
+    "icon": "palworld",
     "data": {
-        "name": {
+        "admin_password": {
             "type": "string",
-            "value": "Palworld ARM Server",
-            "display": "Server Name",
-            "desc": "Choose your server name.",
+            "value": "changeme",
+            "display": "Admin Password",
             "required": true,
             "userEdit": true
         },
-        "password": {
+        "extra_flags": {
             "type": "string",
-            "value": "",
-            "display": "Server Password",
-            "desc": "Set your server password (leave blank if none).",
+            "value": "-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
+            "display": "Extra Flags",
             "required": false,
             "userEdit": true
         },
-        "players": {
+        "max_players": {
             "type": "integer",
             "value": 32,
             "display": "Max Players",
-            "desc": "Maximum number of simultaneous players.",
             "required": true,
             "userEdit": true
         },
         "port": {
             "type": "integer",
             "value": 8211,
-            "display": "Port",
-            "desc": "The UDP port your server will bind to.",
+            "display": "Game Port",
+            "required": true,
+            "userEdit": true
+        },
+        "query_port": {
+            "type": "integer",
+            "value": 27015,
+            "display": "Query Port",
             "required": true,
             "userEdit": false
+        },
+        "rcon_port": {
+            "type": "integer",
+            "value": 25575,
+            "display": "RCON Port",
+            "required": true,
+            "userEdit": true
+        },
+        "server_name": {
+            "type": "string",
+            "value": "A PufferPanel hosted Palworld Server",
+            "display": "Server Name",
+            "required": true,
+            "userEdit": true
+        },
+        "server_password": {
+            "type": "string",
+            "value": "",
+            "display": "Server Password",
+            "required": false,
+            "userEdit": true
         }
     },
     "install": [
         {
-            "if": "env == 'host'",
-            "type": "steamgamedl",
-            "appId": "2394010"
-        },
-        {
-            "if": "env == 'docker'",
             "type": "command",
             "commands": [
-                "sh -c 'mkdir -p /tmp/palworld && until [ -f /tmp/palworld/PalServer.sh ]; do if [ -f /root/steamcmd/linux64/steamcmd ]; then box64 /root/steamcmd/linux64/steamcmd +login anonymous +app_info_print 2394010 +quit > /dev/null; else steamcmd +login anonymous +app_info_print 2394010 +quit > /dev/null; fi && box64 /root/steamcmd/linux64/steamcmd +force_install_dir /tmp/palworld +login anonymous +app_update 2394010 validate +quit; if [ ! -f /tmp/palworld/PalServer.sh ]; then echo \"SteamCMD failed or crashed, retrying...\"; sleep 2; fi; done && cp -r /tmp/palworld/. . && rm -rf /tmp/palworld'"
+                "apt-get update",
+                "apt-get -y install tar xz-utils curl git unzip"
             ]
         },
         {
+            "type": "writefile",
+            "target": "install.sh",
+            "text": "#!/bin/sh\nset -e\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\nrm -rf steamapps/appmanifest_2394010.acf\nFEXRootFSFetcher -y -x --distro-name=ubuntu --distro-version=22.04\nmkdir -p steamcmd steamapps\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C steamcmd\nrm steamcmd.tar.gz\nFEXInterpreter ./steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType linux +force_install_dir \"$(pwd)\" +login anonymous +app_update 2394010 validate +quit\n"
+        },
+        {
+            "type": "writefile",
+            "text": "#!/bin/sh\nexport FEX_APP_DATA_LOCATION=\"$(pwd)/.fex-emu\"\nexport LD_LIBRARY_PATH=\"$(pwd)/linux64:$LD_LIBRARY_PATH\"\n\nmkdir -p $HOME/.steam/sdk64\nif [ -f ./linux64/steamclient.so ]; then\n  cp ./linux64/steamclient.so $HOME/.steam/sdk64/\nfi\nchmod +x ./Pal/Binaries/Linux/PalServer-Linux-Shipping\n\nif ! id -u puffer > /dev/null 2>&1; then\n  useradd -d \"$(pwd)\" -M puffer\nfi\nchown -R puffer:puffer .\n\nsu -s /bin/bash puffer -c \"\nexport FEX_APP_DATA_LOCATION=\\\"$(pwd)/.fex-emu\\\"\nexport LD_LIBRARY_PATH=\\\"$(pwd)/linux64:\\$LD_LIBRARY_PATH\\\"\nCMD=\\\"FEXInterpreter ./Pal/Binaries/Linux/PalServer-Linux-Shipping Pal -publiclobby ${extra_flags} -port=${port} -publicport=${port} -servername='${server_name}' -players=${max_players} -queryPort=${query_port} -adminpassword='${admin_password}' -rcon\\\"\n\nif [ -n \\\"${server_password}\\\" ]; then\n  CMD=\\\"\\$CMD -serverpassword='${server_password}'\\\"\nfi\n\neval \\$CMD\n\"\n",
+            "target": "start.sh"
+        },
+        {
             "type": "command",
             "commands": [
-                "chmod +x PalServer.sh",
-                "chmod +x Pal/Binaries/Linux/PalServer-Linux-Shipping"
+                "sh install.sh && rm -f install.sh"
             ]
         }
     ],
     "uninstall": null,
     "run": {
-        "command": "sh -c 'id -u palworld >/dev/null 2>&1 || useradd -m palworld || adduser -D palworld; mkdir -p /home/palworld/.steam/sdk64; if [ -f ./linux64/steamclient.so ]; then cp ./linux64/steamclient.so /home/palworld/.steam/sdk64/; elif [ -f /root/steamcmd/linux64/steamclient.so ]; then cp /root/steamcmd/linux64/steamclient.so /home/palworld/.steam/sdk64/; fi; chown -R palworld:palworld . /home/palworld/.steam; exec runuser -u palworld -- box64 ./Pal/Binaries/Linux/PalServer-Linux-Shipping Pal -port=${port} -players=${players} -ServerName=\"${name}\" -ServerPassword=\"${password}\" -PublicPort=${port}'",
+        "command": "sh start.sh",
         "stopCode": 2,
-        "environmentVars": {
-            "BOX64_DYNAREC_STRONGMEM": "1",
-            "BOX64_DYNAREC_X87DOUBLE": "1",
-            "BOX64_MALLOC_PERTURB": "0",
-            "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH"
-        },
         "stdin": {
             "type": "stdin"
         },
@@ -74,21 +97,38 @@
         "autorestart": false
     },
     "environment": {
-        "type": "docker"
+        "type": "docker",
+        "image": "quintenqvd/pterodactyl_images:dev_fex",
+        "portBindings": [
+            "0.0.0.0:${port}:${port}/udp",
+            "0.0.0.0:${rcon_port}:${rcon_port}/tcp",
+            "0.0.0.0:${rcon_port}:${rcon_port}/udp"
+        ]
     },
     "supportedEnvironments": [
         {
             "type": "docker",
+            "networkName": "host",
+            "bindings": {},
+            "image": "quintenqvd/pterodactyl_images:dev_fex",
             "portBindings": [
                 "0.0.0.0:${port}:${port}/udp",
-                "0.0.0.0:27015:27015/udp"
+                "0.0.0.0:${rcon_port}:${rcon_port}/tcp",
+                "0.0.0.0:${rcon_port}:${rcon_port}/udp",
+                "0.0.0.0:${query_port}:${query_port}/udp"
             ],
-            "image": "tsxcloud/valheim-arm:latest"
+            "containerRoot": ""
         }
     ],
     "requirements": {
         "os": "linux",
-        "arch": "arm64"
+        "arch": "arm64",
+        "binaries": [
+            "curl",
+            "tar",
+            "unzip",
+            "git"
+        ]
     },
     "stats": {
         "type": ""
@@ -100,5 +140,5 @@
         "frequency": "",
         "command": ""
     },
-    "name": "Palworld Arm64"
+    "name": "palworld-arm64"
 }
