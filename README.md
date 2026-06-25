@@ -15,7 +15,7 @@ This project made for storing the Pufferpanel Templates that I need.
 
 List by Letter:
 
-[A](https://github.com/ntavi/pufferpanel-templates/tree/main#a) | [B](https://github.com/ntavi/pufferpanel-templates/tree/main#b) | [C](https://github.com/ntavi/pufferpanel-templates/tree/main#c) | [D](https://github.com/ntavi/pufferpanel-templates/tree/main#d) | [E](https://github.com/ntavi/pufferpanel-templates/tree/main#e) | [F](https://github.com/ntavi/pufferpanel-templates/tree/main#f) | [G](https://github.com/ntavi/pufferpanel-templates/tree/main#g) | [H](https://github.com/ntavi/pufferpanel-templates/tree/main#h) | [I](https://github.com/ntavi/pufferpanel-templates/tree/main#i) | [J](https://github.com/ntavi/pufferpanel-templates/tree/main#j) | [K](https://github.com/ntavi/pufferpanel-templates/tree/main#k) | [L](https://github.com/ntavi/pufferpanel-templates/tree/main#l) | [M](https://github.com/ntavi/pufferpanel-templates/tree/main#m) | [N](https://github.com/ntavi/pufferpanel-templates/tree/main#n) | [O](https://github.com/ntavi/pufferpanel-templates/tree/main#o) | [P](https://github.com/ntavi/pufferpanel-templates/tree/main#p) | [Q](https://github.com/ntavi/pufferpanel-templates/tree/main#q) | [R](https://github.com/ntavi/pufferpanel-templates/tree/main#r) | [S](https://github.com/ntavi/pufferpanel-templates/tree/main#s) | [T](https://github.com/ntavi/pufferpanel-templates/tree/main#t) | [U](https://github.com/ntavi/pufferpanel-templates/tree/main#u) | [V](https://github.com/ntavi/pufferpanel-templates/tree/main#v) | [W](https://github.com/ntavi/pufferpanel-templates/tree/main#w) | [X](https://github.com/ntavi/pufferpanel-templates/tree/main#x) | [Y](https://github.com/ntavi/pufferpanel-templates/tree/main#y) | [Z](https://github.com/ntavi/pufferpanel-templates/tree/main#Z)
+[A](https://github.com/ntavi/pufferpanel-templates/tree/3.x#a) | [B](https://github.com/ntavi/pufferpanel-templates/tree/3.x#b) | [C](https://github.com/ntavi/pufferpanel-templates/tree/3.x#c) | [D](https://github.com/ntavi/pufferpanel-templates/tree/3.x#d) | [E](https://github.com/ntavi/pufferpanel-templates/tree/3.x#e) | [F](https://github.com/ntavi/pufferpanel-templates/tree/3.x#f) | [G](https://github.com/ntavi/pufferpanel-templates/tree/3.x#g) | [H](https://github.com/ntavi/pufferpanel-templates/tree/3.x#h) | [I](https://github.com/ntavi/pufferpanel-templates/tree/3.x#i) | [J](https://github.com/ntavi/pufferpanel-templates/tree/3.x#j) | [K](https://github.com/ntavi/pufferpanel-templates/tree/3.x#k) | [L](https://github.com/ntavi/pufferpanel-templates/tree/3.x#l) | [M](https://github.com/ntavi/pufferpanel-templates/tree/3.x#m) | [N](https://github.com/ntavi/pufferpanel-templates/tree/3.x#n) | [O](https://github.com/ntavi/pufferpanel-templates/tree/3.x#o) | [P](https://github.com/ntavi/pufferpanel-templates/tree/3.x#p) | [Q](https://github.com/ntavi/pufferpanel-templates/tree/3.x#q) | [R](https://github.com/ntavi/pufferpanel-templates/tree/3.x#r) | [S](https://github.com/ntavi/pufferpanel-templates/tree/3.x#s) | [T](https://github.com/ntavi/pufferpanel-templates/tree/3.x#t) | [U](https://github.com/ntavi/pufferpanel-templates/tree/3.x#u) | [V](https://github.com/ntavi/pufferpanel-templates/tree/3.x#v) | [W](https://github.com/ntavi/pufferpanel-templates/tree/3.x#w) | [X](https://github.com/ntavi/pufferpanel-templates/tree/3.x#x) | [Y](https://github.com/ntavi/pufferpanel-templates/tree/3.x#y) | [Z](https://github.com/ntavi/pufferpanel-templates/tree/3.x#Z)
 ---
 
 ## 🎮 Game Templates
@@ -23,8 +23,8 @@ List by Letter:
 ### A
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [7 Days to Die](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/7days2die.json) | ✅ | - |
-| [ARK Survival Evolved](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/ark_survival_evolved.json) | ✅ | - |
+| [7 Days to Die](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/7days2die.json) | ✅ | - |
+| [ARK Survival Evolved](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/ark_survival_evolved.json) | ✅ | - |
 
 ### B
 | Game | ARM64 | Notes |
@@ -33,7 +33,7 @@ List by Letter:
 ### C
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Counter Strike 1.6](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/cs1.6.json) | ✅ | - |
+| [Counter Strike 1.6](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/cs1.6.json) | ✅ | - |
 
 ### D
 | Game | ARM64 | Notes |
@@ -42,12 +42,12 @@ List by Letter:
 ### E
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Enshrouded](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/enshrouded.json) | ✅ | - |
+| [Enshrouded](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/enshrouded.json) | ✅ | - |
 
 ### F
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [FiveM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/fivem.json) | ✅ | - |
+| [FiveM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/fivem.json) | ✅ | - |
 
 ### G
 | Game | ARM64 | Notes |
@@ -60,7 +60,7 @@ List by Letter:
 ### I
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Icarus](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/icarus.json) | ✅ | - |
+| [Icarus](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/icarus.json) | ✅ | - |
 
 ### J
 | Game | ARM64 | Notes |
@@ -89,7 +89,7 @@ List by Letter:
 ### P
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Palworld](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/palworld.json) | ✅ | - |
+| [Palworld](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/palworld.json) | ✅ | - |
 
 ### Q
 | Game | ARM64 | Notes |
@@ -98,14 +98,14 @@ List by Letter:
 ### R
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Return To Moria](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/return_to_moria.json) | ✅ | - |
+| [Return To Moria](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/return_to_moria.json) | ✅ | - |
 
 ### S
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [SCUM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/scum.json) | ❔ | - |
-| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/sons_of_the_forest.json) | ❌ | - |
-| [Sunkenland](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/sunkenland.json) | ❔ | - |
+| [SCUM](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/scum.json) | ❔ | - |
+| [Sons of the Forest](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/sons_of_the_forest.json) | ❌ | - |
+| [Sunkenland](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/sunkenland.json) | ❔ | - |
 
 ### T
 | Game | ARM64 | Notes |
@@ -118,8 +118,8 @@ List by Letter:
 ### V
 | Game | ARM64 | Notes |
 |---------|------|-------|
-| [Valheim](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/valheim.json) | ✅ | - |
-| [V-Rising](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/vrising.json) | ✅ | - |
+| [Valheim](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/valheim.json) | ✅ | - |
+| [V-Rising](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/vrising.json) | ✅ | - |
 
 ### W
 | Game | ARM64 | Notes |
@@ -138,7 +138,7 @@ List by Letter:
 |---------|------|-------|
 ---
 
-[Go UP](https://github.com/ntavi/pufferpanel-templates/tree/main#disclaimer)
+[Go UP](https://github.com/ntavi/pufferpanel-templates/tree/3.x#disclaimer)
 
 ## Mentions
 ##### Pterodactyl Templates:
