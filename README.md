@@ -11,8 +11,10 @@ This project made for storing the Pufferpanel Templates that I need.
 | ❔ | Untested (Should Work) |
 | ❌ | Not Working |
 
-*Right click on any JSON file link and select "Save link as" to download*
+*Right click on any Game link and select "Save link as" to download*
 
+List by Letter:
+| [A](https://github.com/ntavi/pufferpanel-templates/tree/main#a) | [B](https://github.com/ntavi/pufferpanel-templates/tree/main#b) | [C](https://github.com/ntavi/pufferpanel-templates/tree/main#c) | [D](https://github.com/ntavi/pufferpanel-templates/tree/main#d) | [E](https://github.com/ntavi/pufferpanel-templates/tree/main#e) | [F](https://github.com/ntavi/pufferpanel-templates/tree/main#f) | [G](https://github.com/ntavi/pufferpanel-templates/tree/main#g) | [H](https://github.com/ntavi/pufferpanel-templates/tree/main#h) | [I](https://github.com/ntavi/pufferpanel-templates/tree/main#i) | [J](https://github.com/ntavi/pufferpanel-templates/tree/main#j) | [K](https://github.com/ntavi/pufferpanel-templates/tree/main#k) | [L](https://github.com/ntavi/pufferpanel-templates/tree/main#l) | [M](https://github.com/ntavi/pufferpanel-templates/tree/main#m) | [N](https://github.com/ntavi/pufferpanel-templates/tree/main#n) | [O](https://github.com/ntavi/pufferpanel-templates/tree/main#o) | [P](https://github.com/ntavi/pufferpanel-templates/tree/main#p) | [Q](https://github.com/ntavi/pufferpanel-templates/tree/main#q) | [R](https://github.com/ntavi/pufferpanel-templates/tree/main#r) | [S](https://github.com/ntavi/pufferpanel-templates/tree/main#s) | [T](https://github.com/ntavi/pufferpanel-templates/tree/main#t) | [U](https://github.com/ntavi/pufferpanel-templates/tree/main#u) | [V](https://github.com/ntavi/pufferpanel-templates/tree/main#v) | [W](https://github.com/ntavi/pufferpanel-templates/tree/main#w) | [X](https://github.com/ntavi/pufferpanel-templates/tree/main#x) | [Y](https://github.com/ntavi/pufferpanel-templates/tree/main#y) | [Z](https://github.com/ntavi/pufferpanel-templates/tree/main#Z)
 ---
 
 ## 🎮 Game Templates
@@ -31,6 +33,10 @@ This project made for storing the Pufferpanel Templates that I need.
 | Game | ARM64 | Notes |
 |---------|------|-------|
 | [Counter Strike 1.6](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/cs1.6.json) | ✅ | - |
+
+### D
+| Game | ARM64 | Notes |
+|---------|------|-------|
 
 ### E
 | Game | ARM64 | Notes |
@@ -55,7 +61,23 @@ This project made for storing the Pufferpanel Templates that I need.
 |---------|------|-------|
 | [Icarus](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/icarus.json) | ✅ | - |
 
+### J
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### K
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### L
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
 ### M
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### N
 | Game | ARM64 | Notes |
 |---------|------|-------|
 
@@ -96,7 +118,25 @@ This project made for storing the Pufferpanel Templates that I need.
 |---------|------|-------|
 | [Valheim](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/valheim.json) | ✅ | - |
 | [V-Rising](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/main/arm64/templates/vrising.json) | ✅ | - |
+
+### W
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### X
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### Y
+| Game | ARM64 | Notes |
+|---------|------|-------|
+
+### Z
+| Game | ARM64 | Notes |
+|---------|------|-------|
 ---
+
+[Go UP](https://github.com/ntavi/pufferpanel-templates/tree/main#disclaimer)
 
 ## Mentions
 # Pterodactyl Templates:
