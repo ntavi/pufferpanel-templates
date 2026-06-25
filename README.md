@@ -140,5 +140,5 @@ List by Letter:
 [Go UP](https://github.com/ntavi/pufferpanel-templates/tree/main#disclaimer)
 
 ## Mentions
-# Pterodactyl Templates:
+##### Pterodactyl Templates:
 - [QuintenQVD0](https://github.com/QuintenQVD0) (And for README.md xD)
