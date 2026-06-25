@@ -1,9 +1,9 @@
 This project made for storing the Pufferpanel Templates that I need.
 
 ## Disclaimer:
-- I Just wrote the pufferpanel templates NOT the docker files -
+- I wrote the pufferpanel templates NOT the docker files
 
-## 📋 Legend
+## 📋 Compatibility
 
 | Icon | Meaning |
 |------|---------|
@@ -14,7 +14,8 @@ This project made for storing the Pufferpanel Templates that I need.
 *Right click on any Game link and select "Save link as" to download*
 
 List by Letter:
-| [A](https://github.com/ntavi/pufferpanel-templates/tree/main#a) | [B](https://github.com/ntavi/pufferpanel-templates/tree/main#b) | [C](https://github.com/ntavi/pufferpanel-templates/tree/main#c) | [D](https://github.com/ntavi/pufferpanel-templates/tree/main#d) | [E](https://github.com/ntavi/pufferpanel-templates/tree/main#e) | [F](https://github.com/ntavi/pufferpanel-templates/tree/main#f) | [G](https://github.com/ntavi/pufferpanel-templates/tree/main#g) | [H](https://github.com/ntavi/pufferpanel-templates/tree/main#h) | [I](https://github.com/ntavi/pufferpanel-templates/tree/main#i) | [J](https://github.com/ntavi/pufferpanel-templates/tree/main#j) | [K](https://github.com/ntavi/pufferpanel-templates/tree/main#k) | [L](https://github.com/ntavi/pufferpanel-templates/tree/main#l) | [M](https://github.com/ntavi/pufferpanel-templates/tree/main#m) | [N](https://github.com/ntavi/pufferpanel-templates/tree/main#n) | [O](https://github.com/ntavi/pufferpanel-templates/tree/main#o) | [P](https://github.com/ntavi/pufferpanel-templates/tree/main#p) | [Q](https://github.com/ntavi/pufferpanel-templates/tree/main#q) | [R](https://github.com/ntavi/pufferpanel-templates/tree/main#r) | [S](https://github.com/ntavi/pufferpanel-templates/tree/main#s) | [T](https://github.com/ntavi/pufferpanel-templates/tree/main#t) | [U](https://github.com/ntavi/pufferpanel-templates/tree/main#u) | [V](https://github.com/ntavi/pufferpanel-templates/tree/main#v) | [W](https://github.com/ntavi/pufferpanel-templates/tree/main#w) | [X](https://github.com/ntavi/pufferpanel-templates/tree/main#x) | [Y](https://github.com/ntavi/pufferpanel-templates/tree/main#y) | [Z](https://github.com/ntavi/pufferpanel-templates/tree/main#Z)
+
+[A](https://github.com/ntavi/pufferpanel-templates/tree/main#a) | [B](https://github.com/ntavi/pufferpanel-templates/tree/main#b) | [C](https://github.com/ntavi/pufferpanel-templates/tree/main#c) | [D](https://github.com/ntavi/pufferpanel-templates/tree/main#d) | [E](https://github.com/ntavi/pufferpanel-templates/tree/main#e) | [F](https://github.com/ntavi/pufferpanel-templates/tree/main#f) | [G](https://github.com/ntavi/pufferpanel-templates/tree/main#g) | [H](https://github.com/ntavi/pufferpanel-templates/tree/main#h) | [I](https://github.com/ntavi/pufferpanel-templates/tree/main#i) | [J](https://github.com/ntavi/pufferpanel-templates/tree/main#j) | [K](https://github.com/ntavi/pufferpanel-templates/tree/main#k) | [L](https://github.com/ntavi/pufferpanel-templates/tree/main#l) | [M](https://github.com/ntavi/pufferpanel-templates/tree/main#m) | [N](https://github.com/ntavi/pufferpanel-templates/tree/main#n) | [O](https://github.com/ntavi/pufferpanel-templates/tree/main#o) | [P](https://github.com/ntavi/pufferpanel-templates/tree/main#p) | [Q](https://github.com/ntavi/pufferpanel-templates/tree/main#q) | [R](https://github.com/ntavi/pufferpanel-templates/tree/main#r) | [S](https://github.com/ntavi/pufferpanel-templates/tree/main#s) | [T](https://github.com/ntavi/pufferpanel-templates/tree/main#t) | [U](https://github.com/ntavi/pufferpanel-templates/tree/main#u) | [V](https://github.com/ntavi/pufferpanel-templates/tree/main#v) | [W](https://github.com/ntavi/pufferpanel-templates/tree/main#w) | [X](https://github.com/ntavi/pufferpanel-templates/tree/main#x) | [Y](https://github.com/ntavi/pufferpanel-templates/tree/main#y) | [Z](https://github.com/ntavi/pufferpanel-templates/tree/main#Z)
 ---
 
 ## 🎮 Game Templates
