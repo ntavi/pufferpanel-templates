@@ -25,6 +25,7 @@ List by Letter:
 |---------|------|-------|
 | [7 Days to Die](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/7days2die.json) | ✅ | - |
 | [ARK Survival Evolved](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/ark_survival_evolved.json) | ✅ | - |
+| [ASKA](https://raw.githubusercontent.com/ntavi/pufferpanel-templates/refs/heads/3.x/arm64/aska.json) | ✅ | - |
 
 ### B
 | Game | ARM64 | Notes |
