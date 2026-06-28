@@ -10,6 +10,55 @@
             "required": true,
             "userEdit": true
         },
+        "auto_update": {
+            "type": "boolean",
+            "value": true,
+            "display": "Auto Update On Boot",
+            "desc": "Run steamcmd app_update again every time the server starts.",
+            "required": true,
+            "userEdit": true
+        },
+        "autosave_style": {
+            "type": "options",
+            "value": "every morning",
+            "display": "Autosave Style",
+            "required": true,
+            "userEdit": true,
+            "options": [
+                {
+                    "value": "disabled",
+                    "display": "Disabled"
+                },
+                {
+                    "value": "every morning",
+                    "display": "Every Morning"
+                },
+                {
+                    "value": "every 5 minutes",
+                    "display": "Every 5 Minutes"
+                },
+                {
+                    "value": "every 10 minutes",
+                    "display": "Every 10 Minutes"
+                },
+                {
+                    "value": "every 15 minutes",
+                    "display": "Every 15 Minutes"
+                },
+                {
+                    "value": "every 20 minutes",
+                    "display": "Every 20 Minutes"
+                }
+            ]
+        },
+        "keep_world_alive": {
+            "type": "boolean",
+            "value": false,
+            "display": "Keep Server World Alive",
+            "desc": "If true, the world keeps updating with no players online. If false, it loads on first join and unloads when empty.",
+            "required": true,
+            "userEdit": true
+        },
         "password": {
             "type": "string",
             "value": "",
@@ -41,21 +90,66 @@
             "required": true,
             "userEdit": true,
             "options": [
-                {"value": "default", "display": "Automatically"},
-                {"value": "asia", "display": "Asia"},
-                {"value": "japan", "display": "Japan"},
-                {"value": "europe", "display": "Europe"},
-                {"value": "south america", "display": "South America"},
-                {"value": "south korea", "display": "South Korea"},
-                {"value": "usa east", "display": "USA East"},
-                {"value": "usa west", "display": "USA West"},
-                {"value": "australia", "display": "Australia"},
-                {"value": "canada east", "display": "Canada East"},
-                {"value": "hong kong", "display": "Hong Kong"},
-                {"value": "india", "display": "India"},
-                {"value": "turkey", "display": "Turkey"},
-                {"value": "united arab emirates", "display": "United Arab Emirates"},
-                {"value": "usa south central", "display": "USA South Central"}
+                {
+                    "value": "default",
+                    "display": "Automatically"
+                },
+                {
+                    "value": "asia",
+                    "display": "Asia"
+                },
+                {
+                    "value": "japan",
+                    "display": "Japan"
+                },
+                {
+                    "value": "europe",
+                    "display": "Europe"
+                },
+                {
+                    "value": "south america",
+                    "display": "South America"
+                },
+                {
+                    "value": "south korea",
+                    "display": "South Korea"
+                },
+                {
+                    "value": "usa east",
+                    "display": "USA East"
+                },
+                {
+                    "value": "usa west",
+                    "display": "USA West"
+                },
+                {
+                    "value": "australia",
+                    "display": "Australia"
+                },
+                {
+                    "value": "canada east",
+                    "display": "Canada East"
+                },
+                {
+                    "value": "hong kong",
+                    "display": "Hong Kong"
+                },
+                {
+                    "value": "india",
+                    "display": "India"
+                },
+                {
+                    "value": "turkey",
+                    "display": "Turkey"
+                },
+                {
+                    "value": "united arab emirates",
+                    "display": "United Arab Emirates"
+                },
+                {
+                    "value": "usa south central",
+                    "display": "USA South Central"
+                }
             ]
         },
         "save_name": {
@@ -78,45 +172,6 @@
             "value": "ASKA Server",
             "display": "Server Name",
             "desc": "Choose your server name.",
-            "required": true,
-            "userEdit": true
-        },
-        "display_name": {
-            "type": "string",
-            "value": "ASKA Server",
-            "display": "Display Name",
-            "desc": "Name the session displays in the session list for new saves. For old saves it takes the name from the save itself.",
-            "required": false,
-            "userEdit": true
-        },
-        "keep_world_alive": {
-            "type": "boolean",
-            "value": false,
-            "display": "Keep Server World Alive",
-            "desc": "If true, the world keeps updating with no players online. If false, it loads on first join and unloads when empty.",
-            "required": true,
-            "userEdit": true
-        },
-        "autosave_style": {
-            "type": "options",
-            "value": "every morning",
-            "display": "Autosave Style",
-            "required": true,
-            "userEdit": true,
-            "options": [
-                {"value": "disabled", "display": "Disabled"},
-                {"value": "every morning", "display": "Every Morning"},
-                {"value": "every 5 minutes", "display": "Every 5 Minutes"},
-                {"value": "every 10 minutes", "display": "Every 10 Minutes"},
-                {"value": "every 15 minutes", "display": "Every 15 Minutes"},
-                {"value": "every 20 minutes", "display": "Every 20 Minutes"}
-            ]
-        },
-        "auto_update": {
-            "type": "boolean",
-            "value": true,
-            "display": "Auto Update On Boot",
-            "desc": "Run steamcmd app_update again every time the server starts.",
             "required": true,
             "userEdit": true
         }
@@ -145,7 +200,7 @@
         {
             "type": "writefile",
             "target": "server properties.txt",
-            "text": "\r\n\r\n//save id is what comes after \"savegame_\" on a save file and can be \r\n//provided to make the server load that save, the save file will be \r\n//searched in the \"server\" folder next to the normal game save folders, \r\n//in this case the session display name, seed and other new session\r\n//customization will be ignored, moreover, when creating a new save the \r\n//save id will be filled in by the server once the session opens so to be able to\r\n//seemlesly load this save again after the first time\r\nsave id = ${save_name}\r\n\r\n//display name is the name the session displays in the session list for new saves,\r\n//for old saves it will take the name from the save itself\r\ndisplay name = ${display_name}\r\n\r\n//override for the host name that is displayed in the session list\r\n//if left blank it will use what would normally be used when hosting from this machine\r\nserver name = ${sv_name}\r\n\r\n//the seed of the new save\r\nseed = ${seed}\r\n\r\n//the password this session will have\r\npassword = ${sv_password}\r\n\r\n//the port that clients will connect to for gameplay\r\nsteam game port = ${game_port}\r\n\r\n//the port that will manage server browser related duties and info \r\n//pings from clients.\r\nsteam query port = ${query_port}\r\n\r\n//the token needed for an authentication without a Steam client\r\n//should come from https://steamcommunity.com/dev/managegameservers\r\n//for the Aska game app (id: 1898300)\r\nauthentication token = ${auth_token}\r\n\r\n//the region to open this session on\r\n//possible options: default, asia, japan, europe, south america, south korea\r\n//usa east, usa west, australia, canada east, hong kong, india, turkey,\r\n//united arab emirates, usa south central\r\n//leave default to ping the best region\r\nregion = ${region}\r\n\r\n//if set to true when the session is open, the world is also updating, even\r\n//without players, if set to false, the world loads when the first player joins\r\n//and the world unloads when the last player leaves\r\nkeep server world alive = ${keep_world_alive}\r\n\r\n//the style in which the server should save, possible options: every morning\r\n//disabled, every 5 minutes, every 10 minutes, every 15 minutes, every 20 minutes \r\nautosave style = ${autosave_style}\r\n\r\n//set to normal for the standard way of playing or to custom to be able to\r\n//customize certain aspects of gameplay\r\nmode = normal\r\n\r\n//possible options: smooth, normal, rocky\r\n//only works in custom mode\r\nterrain aspect = normal\r\n\r\n//possible options: flat, normal, varied\r\n//only works in custom mode\r\nterrain height = normal\r\n\r\n//possible options: spring, summer, autumn, winter\r\n//only works in custom mode\r\nstarting season = spring\r\n\r\n//possible options: minimum, reduced, default, extended, maximum\r\n//only works in custom mode\r\nyear length = default\r\n\r\n//possible options: everything from 0 (sunny) to 6 (soggy)\r\n//only works in custom mode\r\nprecipitation = 3\r\n\r\n//possible options: minimum, reduced, default, extended, maximum\r\n//only works in custom mode\r\nday length = default\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nstructure decay = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nclothing decay = medium\r\n\r\n//possible options: off, easy, normal, hard\r\n//only works in custom mode\r\ninvasion dificulty = normal\r\n\r\n//possible options: off, low, medium, high\r\n//only works in custom mode\r\nmonster density = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nmonster population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nwulfar population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nherbivore population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nbear population = medium\r\n\r\n"
+            "text": "\r\n\r\n//save id is what comes after \"savegame_\" on a save file and can be \r\n//provided to make the server load that save, the save file will be \r\n//searched in the \"server\" folder next to the normal game save folders, \r\n//in this case the session display name, seed and other new session\r\n//customization will be ignored, moreover, when creating a new save the \r\n//save id will be filled in by the server once the session opens so to be able to\r\n//seemlesly load this save again after the first time\r\nsave id = ${save_name}\r\n\r\n//display name is the name the session displays in the session list for new saves,\r\n//for old saves it will take the name from the save itself\r\ndisplay name = ${sv_name}\r\n\r\n//override for the host name that is displayed in the session list\r\n//if left blank it will use what would normally be used when hosting from this machine\r\nserver name = ${sv_name}\r\n\r\n//the seed of the new save\r\nseed = ${seed}\r\n\r\n//the password this session will have\r\npassword = ${sv_password}\r\n\r\n//the port that clients will connect to for gameplay\r\nsteam game port = ${game_port}\r\n\r\n//the port that will manage server browser related duties and info \r\n//pings from clients.\r\nsteam query port = ${query_port}\r\n\r\n//the token needed for an authentication without a Steam client\r\n//should come from https://steamcommunity.com/dev/managegameservers\r\n//for the Aska game app (id: 1898300)\r\nauthentication token = ${auth_token}\r\n\r\n//the region to open this session on\r\n//possible options: default, asia, japan, europe, south america, south korea\r\n//usa east, usa west, australia, canada east, hong kong, india, turkey,\r\n//united arab emirates, usa south central\r\n//leave default to ping the best region\r\nregion = ${region}\r\n\r\n//if set to true when the session is open, the world is also updating, even\r\n//without players, if set to false, the world loads when the first player joins\r\n//and the world unloads when the last player leaves\r\nkeep server world alive = ${keep_world_alive}\r\n\r\n//the style in which the server should save, possible options: every morning\r\n//disabled, every 5 minutes, every 10 minutes, every 15 minutes, every 20 minutes \r\nautosave style = ${autosave_style}\r\n\r\n//set to normal for the standard way of playing or to custom to be able to\r\n//customize certain aspects of gameplay\r\nmode = normal\r\n\r\n//possible options: smooth, normal, rocky\r\n//only works in custom mode\r\nterrain aspect = normal\r\n\r\n//possible options: flat, normal, varied\r\n//only works in custom mode\r\nterrain height = normal\r\n\r\n//possible options: spring, summer, autumn, winter\r\n//only works in custom mode\r\nstarting season = spring\r\n\r\n//possible options: minimum, reduced, default, extended, maximum\r\n//only works in custom mode\r\nyear length = default\r\n\r\n//possible options: everything from 0 (sunny) to 6 (soggy)\r\n//only works in custom mode\r\nprecipitation = 3\r\n\r\n//possible options: minimum, reduced, default, extended, maximum\r\n//only works in custom mode\r\nday length = default\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nstructure decay = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nclothing decay = medium\r\n\r\n//possible options: off, easy, normal, hard\r\n//only works in custom mode\r\ninvasion dificulty = normal\r\n\r\n//possible options: off, low, medium, high\r\n//only works in custom mode\r\nmonster density = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nmonster population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nwulfar population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nherbivore population = medium\r\n\r\n//possible options: low, medium, high\r\n//only works in custom mode\r\nbear population = medium\r\n\r\n"
         }
     ],
     "uninstall": null,
@@ -157,8 +212,8 @@
             "BOX64_DYNAREC_X87DOUBLE": "1",
             "BOX64_MALLOC_PERTURB": "0",
             "LD_LIBRARY_PATH": "./linux64:$LD_LIBRARY_PATH",
-            "WINEDEBUG": "-all",
-            "SteamAppId": "1898300"
+            "SteamAppId": "1898300",
+            "WINEDEBUG": "-all"
         },
         "stdin": {
             "type": "stdin"
@@ -173,14 +228,14 @@
     "supportedEnvironments": [
         {
             "type": "docker",
-            "bindings": {},
             "image": "tsxcloud/steamcmd-wine-ntsync:10.11-arm64-box",
             "portBindings": [
                 "0.0.0.0:${port}:${port}/udp",
                 "0.0.0.0:${query_port}:${query_port}/udp"
             ],
             "containerRoot": "",
-            "networkName": "host"
+            "networkName": "host",
+            "bindings": {}
         }
     ],
     "requirements": {
